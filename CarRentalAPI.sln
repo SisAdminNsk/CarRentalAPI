@@ -3,13 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRentalAPI", "CarRentalAPI\CarRentalAPI.csproj", "{03880BC6-FD6E-4087-A257-DDBDCDDD7AC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRentalAPI", "CarRentalAPI\CarRentalAPI.csproj", "{03880BC6-FD6E-4087-A257-DDBDCDDD7AC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRentalAPI.Core", "CarRentalAPI.Core\CarRentalAPI.Core.csproj", "{A816FBC9-AE38-4E01-91EC-5068FE414FF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRentalAPI.Core", "CarRentalAPI.Core\CarRentalAPI.Core.csproj", "{A816FBC9-AE38-4E01-91EC-5068FE414FF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRentalAPI.Context", "CarRentalAPI.Context\CarRentalAPI.Context.csproj", "{2AF8755C-50E8-44C1-8917-217910C18A6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRentalAPI.Context", "CarRentalAPI.Context\CarRentalAPI.Context.csproj", "{2AF8755C-50E8-44C1-8917-217910C18A6F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRentalAPI.Infrastructure", "CarRentalAPI.Infrastructure\CarRentalAPI.Infrastructure.csproj", "{4ED754A4-46B4-435C-91D9-BDF3242ED235}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRentalAPI.Infrastructure", "CarRentalAPI.Infrastructure\CarRentalAPI.Infrastructure.csproj", "{4ED754A4-46B4-435C-91D9-BDF3242ED235}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRentalAPI.Application", "CarRentalAPI.Application\CarRentalAPI.Application.csproj", "{4FED760F-934B-446C-8568-405C29AB1A86}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRentalAPI.Contracts", "CarRentalAPI.Contracts\CarRentalAPI.Contracts.csproj", "{B3D89DCA-1E52-4671-B6C5-A77B58D0416E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +37,14 @@ Global
 		{4ED754A4-46B4-435C-91D9-BDF3242ED235}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4ED754A4-46B4-435C-91D9-BDF3242ED235}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4ED754A4-46B4-435C-91D9-BDF3242ED235}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FED760F-934B-446C-8568-405C29AB1A86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FED760F-934B-446C-8568-405C29AB1A86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FED760F-934B-446C-8568-405C29AB1A86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FED760F-934B-446C-8568-405C29AB1A86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3D89DCA-1E52-4671-B6C5-A77B58D0416E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3D89DCA-1E52-4671-B6C5-A77B58D0416E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3D89DCA-1E52-4671-B6C5-A77B58D0416E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3D89DCA-1E52-4671-B6C5-A77B58D0416E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

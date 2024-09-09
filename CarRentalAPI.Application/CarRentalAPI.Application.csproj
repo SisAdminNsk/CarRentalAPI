@@ -7,14 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="ErrorOr" Version="2.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CarRentalAPI.Application\CarRentalAPI.Application.csproj" />
     <ProjectReference Include="..\CarRentalAPI.Context\CarRentalAPI.Context.csproj" />
+    <ProjectReference Include="..\CarRentalAPI.Contracts\CarRentalAPI.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

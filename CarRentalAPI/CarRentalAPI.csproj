@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CarRentalAPI.Application\CarRentalAPI.Application.csproj" />
     <ProjectReference Include="..\CarRentalAPI.Infrastructure\CarRentalAPI.Infrastructure.csproj" />
   </ItemGroup>
 

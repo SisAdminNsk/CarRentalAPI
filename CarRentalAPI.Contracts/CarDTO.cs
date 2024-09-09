@@ -1,35 +1,31 @@
-﻿using CSharpFunctionalExtensions;
-
-namespace CarRentalAPI.Core
+﻿namespace CarRentalAPI.Contracts
 {
-    public class Car : Entity<Guid>
+    public class CarDTO
     {
+        public Guid Id { get; set; }
         public string Brand { get; set; }
         public string Model { get; set; }
         public int Power { get; set; }
         public string CarClass { get; set; }
         public decimal BaseRentalPricePerHour { get; set; }
-        public byte[] ImageData { get; set; }
+        public byte[] ImageData {  get; set; }
+        public CarDTO(
 
-        public Car()
-        {
-            Id = Guid.NewGuid();
-        }
-
-        public Car(
             Guid id,
             string brand,
             string model,
+            int power,
             string carClass,
-            byte[] imageData,
-            decimal baseRentalPricePerHour)
+            decimal baseRentalPricePerHour,
+            byte[] imageData)
         {
             Id = id;
             Brand = brand;
             Model = model;
+            Power = power;
             CarClass = carClass;
-            ImageData = imageData;
             BaseRentalPricePerHour = baseRentalPricePerHour;
+            ImageData = imageData;
         }
     }
 }

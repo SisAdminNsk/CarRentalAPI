@@ -1,4 +1,6 @@
 
+using CarRentalAPI.Application.Mapping;
+
 namespace CarRentalAPI
 {
     public class Program
@@ -14,6 +16,7 @@ namespace CarRentalAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AllowAllOrigins();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddAutoMapper(typeof(CarProfile));
 
             var app = builder.Build();
 
