@@ -1,5 +1,7 @@
 
+using CarRentalAPI.Application.Extentions;
 using CarRentalAPI.Application.Mapping;
+using CarRentalAPI.Infrastructure;
 
 namespace CarRentalAPI
 {
@@ -15,6 +17,11 @@ namespace CarRentalAPI
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AllowAllOrigins();
+            builder.Services.AddInfrastructure();
+            builder.Services.AddApiAuthenticationAndAuthorization();
+            builder.Services.AddSecurity();
+            
+            builder.Services.AddWeightControl();
             builder.Services.AddSwaggerGen();
             builder.Services.AddAutoMapper(typeof(CarProfile));
 
@@ -29,8 +36,6 @@ namespace CarRentalAPI
 
             app.UseCors("AllowAllOrigins");
             app.UseHttpsRedirection();
-
-            app.UseAuthorization();
 
             app.MapControllers();
 

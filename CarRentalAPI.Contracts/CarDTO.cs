@@ -8,7 +8,7 @@
         public int Power { get; set; }
         public string CarClass { get; set; }
         public decimal BaseRentalPricePerHour { get; set; }
-        public byte[] ImageData {  get; set; }
+        public string CarImageURI { get; set; }
         public CarDTO(
 
             Guid id,
@@ -17,15 +17,16 @@
             int power,
             string carClass,
             decimal baseRentalPricePerHour,
-            byte[] imageData)
+            string carImageURI
+            )
         {
             Id = id;
             Brand = brand;
             Model = model;
             Power = power;
             CarClass = carClass;
+            CarImageURI = carImageURI;
             BaseRentalPricePerHour = baseRentalPricePerHour;
-            ImageData = imageData;
         }
     }
 }

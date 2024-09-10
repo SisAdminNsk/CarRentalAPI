@@ -22,7 +22,7 @@ namespace CarRentalAPI.Application.Services
                     car.Brand,
                     car.Model,
                     car.CarClass,
-                    car.ImageData,
+                    new Uri(car.CarImageURI),
                     car.BaseRentalPricePerHour);
 
                 await _context.Cars.AddAsync(carEntity);
@@ -69,7 +69,7 @@ namespace CarRentalAPI.Application.Services
 
                 carEntity.Brand = car.Brand;
                 carEntity.CarClass = car.CarClass;
-                carEntity.ImageData = car.ImageData;
+                //carEntity.ImageData = car.ImageData;
                 carEntity.Power = car.Power;
                 carEntity.BaseRentalPricePerHour = car.BaseRentalPricePerHour;
 

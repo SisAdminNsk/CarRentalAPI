@@ -9,7 +9,7 @@ namespace CarRentalAPI.Core
         public int Power { get; set; }
         public string CarClass { get; set; }
         public decimal BaseRentalPricePerHour { get; set; }
-        public byte[] ImageData { get; set; }
+        public Uri CarImageURI { get; set; }
 
         public Car()
         {
@@ -21,14 +21,14 @@ namespace CarRentalAPI.Core
             string brand,
             string model,
             string carClass,
-            byte[] imageData,
+            Uri carImageURI,
             decimal baseRentalPricePerHour)
         {
             Id = id;
             Brand = brand;
             Model = model;
             CarClass = carClass;
-            ImageData = imageData;
+            CarImageURI = carImageURI;
             BaseRentalPricePerHour = baseRentalPricePerHour;
         }
     }
