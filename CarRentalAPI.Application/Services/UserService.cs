@@ -67,7 +67,7 @@ namespace CarRentalAPI.Application.Services
                 }
                 else
                 {
-                    return Error.NotFound("UserService.Login.NotFound", description: $"Users with login {loginRequest.Login} was not found.");
+                    return Error.NotFound("UserService.Login.NotFound", description: $"User with login: {{{loginRequest.Login}}} was not found.");
                 }
 
                 var token = _jwtProvider.GenerateToken(user);
