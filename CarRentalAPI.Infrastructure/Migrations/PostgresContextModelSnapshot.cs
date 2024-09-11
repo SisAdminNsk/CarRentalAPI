@@ -39,9 +39,9 @@ namespace CarRentalAPI.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<byte[]>("ImageData")
+                    b.Property<string>("CarImageURI")
                         .IsRequired()
-                        .HasColumnType("bytea");
+                        .HasColumnType("text");
 
                     b.Property<string>("Model")
                         .IsRequired()

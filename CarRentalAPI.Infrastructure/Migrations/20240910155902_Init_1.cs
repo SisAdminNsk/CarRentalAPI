@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CarRentalAPI.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class Init_1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,7 +21,7 @@ namespace CarRentalAPI.Infrastructure.Migrations
                     Power = table.Column<int>(type: "integer", nullable: false),
                     CarClass = table.Column<string>(type: "text", nullable: false),
                     BaseRentalPricePerHour = table.Column<decimal>(type: "numeric", nullable: false),
-                    ImageData = table.Column<byte[]>(type: "bytea", nullable: false)
+                    CarImageURI = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {

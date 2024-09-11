@@ -1,6 +1,7 @@
 ﻿using CarRentalAPI.Application.Interfaces;
 using CarRentalAPI.Contracts;
 using CarRentalAPI.Core;
+
 using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 
@@ -88,6 +89,16 @@ namespace CarRentalAPI.Application.Services
         {
             try
             {
+                if (await isUserAlreadyExists(user.Login))
+                {
+                    Dictionary<string, object> metadata = new();
+                    metadata.Add("StatusCode", 409);
+
+
+                    return Error.Conflict("UserService.Registrate.Conflict", $"User with login: {user.Login} already exists.", metadata);
+                }
+
+
                 var roles = await _context.UsersRoles.ToListAsync();
 
                 var standartUserRole = roles.Where(r => r.Name == "user").ToList();
@@ -107,6 +118,18 @@ namespace CarRentalAPI.Application.Services
                 return Error.Failure(code: "UserService.Registrate.Failure", 
                     "Error occured while registration new user", metadata);
             }
+        }
+
+        private async Task<bool> isUserAlreadyExists(string userLogin)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Login == userLogin);
+
+            if(user is not null)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CarRentalAPI.Infrastructure.Migrations
 {
     [DbContext(typeof(PostgresContext))]
-    [Migration("20240909152931_Init")]
-    partial class Init
+    [Migration("20240910155902_Init_1")]
+    partial class Init_1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,9 +42,9 @@ namespace CarRentalAPI.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<byte[]>("ImageData")
+                    b.Property<string>("CarImageURI")
                         .IsRequired()
-                        .HasColumnType("bytea");
+                        .HasColumnType("text");
 
                     b.Property<string>("Model")
                         .IsRequired()

@@ -23,7 +23,7 @@ namespace CarRentalAPI.Controllers
 
             if (errorOrCreated.IsError)
             {
-                return BadRequest(errorOrCreated.Errors);
+                return BadRequest(errorOrCreated.FirstError);
             }
 
             return Ok(errorOrCreated.Value);
