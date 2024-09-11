@@ -62,12 +62,12 @@ namespace CarRentalAPI.Application.Services
 
                     if(result is not true)
                     {
-                        return Error.Conflict("UserService.Login", description: "Wrong password.");
+                        return Error.Conflict("UserService.Login.Conflict", description: "Wrong password.");
                     }
                 }
                 else
                 {
-                    return Error.NotFound("UserService.Login", description: $"Users with login {loginRequest.Login} was not found.");
+                    return Error.NotFound("UserService.Login.NotFound", description: $"Users with login {loginRequest.Login} was not found.");
                 }
 
                 var token = _jwtProvider.GenerateToken(user);
@@ -81,7 +81,7 @@ namespace CarRentalAPI.Application.Services
                 metadata.Add("Exception", ex.Message);
 
 
-                return Error.Failure("UserService.Login", "Failure on login", metadata);
+                return Error.Failure("UserService.Login.Failure", "Failure on login", metadata);
             }
         }
 
