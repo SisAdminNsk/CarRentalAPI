@@ -1,5 +1,6 @@
 ﻿using CarRentalAPI.Application.Interfaces;
 using CarRentalAPI.Infrastructure.Security;
+using CarRentalAPI.Infrastructure.Validation;
 using Microsoft.Extensions.DependencyInjection;
 
 
@@ -10,6 +11,8 @@ namespace CarRentalAPI.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
             services.AddPersistence();
+            services.AddTransient<IValidationService, ValidationService>();
+
             return services;
         }
 

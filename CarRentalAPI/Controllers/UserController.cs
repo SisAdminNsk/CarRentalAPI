@@ -17,7 +17,7 @@ namespace CarRentalAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("RegistrateNewUser")]
-        public async Task<ActionResult> RegistrateNewUser([FromBody] UserDTO user)
+        public async Task<ActionResult> RegistrateNewUser([FromBody] UserRegistrateRequest user)
         {
             var errorOrCreated = await _userService.RegistrateNewUserAsync(user);
 

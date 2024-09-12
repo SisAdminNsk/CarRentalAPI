@@ -85,7 +85,7 @@ namespace CarRentalAPI.Application.Services
             }
         }
 
-        public async Task<ErrorOr<Created>> RegistrateNewUserAsync(UserDTO user)
+        public async Task<ErrorOr<Created>> RegistrateNewUserAsync(UserRegistrateRequest user)
         {
             try
             {

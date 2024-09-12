@@ -6,7 +6,7 @@ namespace CarRentalAPI.Application.Interfaces
 {
     public interface IUserService
     {
-        Task<ErrorOr<Created>> RegistrateNewUserAsync(UserDTO user);
+        Task<ErrorOr<Created>> RegistrateNewUserAsync(UserRegistrateRequest user);
 
         Task<ErrorOr<List<Role>>> GetRolesByLoginAsync(string login);
 
