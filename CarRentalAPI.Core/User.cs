@@ -4,7 +4,8 @@ namespace CarRentalAPI.Core
 {
     public class User : Entity<Guid>
     {
-        public string Login { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
         public string Password { get; set; }
         public List<Role> Roles { get; set; }
 
@@ -15,14 +16,16 @@ namespace CarRentalAPI.Core
 
         public User(
             Guid id,
-            string login,
+            string email,
             string password,
+            string name,
             List<Role> roles)
         {
             Id = id;
-            Login = login;
+            Email = email;
             Password = password;
             Roles = roles;
+            Name = name;
         }
     }
 }

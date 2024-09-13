@@ -11,9 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRentalAPI.Context", "Car
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRentalAPI.Infrastructure", "CarRentalAPI.Infrastructure\CarRentalAPI.Infrastructure.csproj", "{4ED754A4-46B4-435C-91D9-BDF3242ED235}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRentalAPI.Application", "CarRentalAPI.Application\CarRentalAPI.Application.csproj", "{4FED760F-934B-446C-8568-405C29AB1A86}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRentalAPI.Application", "CarRentalAPI.Application\CarRentalAPI.Application.csproj", "{4FED760F-934B-446C-8568-405C29AB1A86}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRentalAPI.Contracts", "CarRentalAPI.Contracts\CarRentalAPI.Contracts.csproj", "{B3D89DCA-1E52-4671-B6C5-A77B58D0416E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRentalAPI.Contracts", "CarRentalAPI.Contracts\CarRentalAPI.Contracts.csproj", "{B3D89DCA-1E52-4671-B6C5-A77B58D0416E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailClient", "EmailClient\EmailClient.csproj", "{E9D70B5F-14B9-4819-89CA-2A4067CC7BB7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{B3D89DCA-1E52-4671-B6C5-A77B58D0416E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3D89DCA-1E52-4671-B6C5-A77B58D0416E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B3D89DCA-1E52-4671-B6C5-A77B58D0416E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9D70B5F-14B9-4819-89CA-2A4067CC7BB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9D70B5F-14B9-4819-89CA-2A4067CC7BB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9D70B5F-14B9-4819-89CA-2A4067CC7BB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9D70B5F-14B9-4819-89CA-2A4067CC7BB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

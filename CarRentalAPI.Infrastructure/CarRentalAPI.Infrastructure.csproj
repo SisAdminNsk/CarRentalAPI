@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CarRentalAPI.Application\CarRentalAPI.Application.csproj" />
     <ProjectReference Include="..\CarRentalAPI.Context\CarRentalAPI.Context.csproj" />
+    <ProjectReference Include="..\EmailClient\EmailClient.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,9 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace CarRentalAPI.Core.Validation
 {
-    public class UserLoginValidationAttribute : ValidationAttribute
+    public class UsernameValidationAttribute : ValidationAttribute
     {
-        public UserLoginValidationAttribute() { }
+        public UsernameValidationAttribute() { }
 
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
@@ -20,7 +20,7 @@ namespace CarRentalAPI.Core.Validation
                     $"и иметь длину от 6 до 32 символов.");
             }
 
-            return new ValidationResult($"Invalid Type for attribute {nameof(UserLoginValidationAttribute)}" +
+            return new ValidationResult($"Invalid Type for attribute {nameof(UsernameValidationAttribute)}" +
                 $" with field {value?.GetType()}");
         }
 

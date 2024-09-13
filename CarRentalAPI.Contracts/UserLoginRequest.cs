@@ -8,12 +8,12 @@ namespace CarRentalAPI.Contracts
 {
     public class UserLoginRequest
     {
-        public string Login {  get; set; }
+        public string Email {  get; set; }
         public string Password { get; set; }
 
-        public UserLoginRequest(string login, string password)
+        public UserLoginRequest(string email, string password)
         {
-            Login = login;
+            Email = email;
             Password = password;
         }
     }

@@ -3,9 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace CarRentalAPI.Core.Validation
 {
-    public class UserPasswordValidationAttribute : ValidationAttribute
+    public class PasswordValidationAttribute : ValidationAttribute
     {
-        public UserPasswordValidationAttribute() { }
+        public PasswordValidationAttribute() { }
 
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
@@ -20,7 +20,7 @@ namespace CarRentalAPI.Core.Validation
                     $"иметь хотя бы одну заглавную букву, любую цифру и специальный символ");
             }
 
-            return new ValidationResult($"Invalid Type for attribute {nameof(UserPasswordValidationAttribute)}" +
+            return new ValidationResult($"Invalid Type for attribute {nameof(PasswordValidationAttribute)}" +
                $" with field {value?.GetType()}");
         }
 

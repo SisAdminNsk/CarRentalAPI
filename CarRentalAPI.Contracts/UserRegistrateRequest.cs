@@ -4,15 +4,18 @@ namespace CarRentalAPI.Contracts
 {
     public class UserRegistrateRequest
     {
+        [EmailValidation]
+        public string Email { get; set; }  
 
-        [UserLoginValidation]
-        public string Login { get; set; }
-        [UserPasswordValidation]
+        [UsernameValidation]
+        public string Username { get; set; }
+        [PasswordValidation]
         public string Password { get; set; }
-        public UserRegistrateRequest(string login, string password)
+        public UserRegistrateRequest(string username, string password, string email)
         {
-            Login = login;
+            Username = username;
             Password = password;
-        }
+            Email = email;
+        }       
     }
 }

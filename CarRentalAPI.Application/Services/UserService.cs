@@ -1,4 +1,6 @@
-﻿using CarRentalAPI.Application.Interfaces;
+﻿using CarRentalAPI.Application.Email;
+using CarRentalAPI.Application.Interfaces;
+using CarRentalAPI.Application.Interfaces.Email;
 using CarRentalAPI.Contracts;
 using CarRentalAPI.Core;
 
@@ -11,41 +13,18 @@ namespace CarRentalAPI.Application.Services
     {
         private readonly IPasswordHasher _passwordHasher;
         private readonly IJWTProvider _jwtProvider;
+        private readonly IEmailConfirmationService _emailConfirmationService;
         private Context.Context _context;
-        public UserService(Context.Context context, IPasswordHasher passwordHasher, IJWTProvider jwtProvider)
+        public UserService(
+            Context.Context context,
+            IPasswordHasher passwordHasher,
+            IJWTProvider jwtProvider,
+            IEmailConfirmationService emailConfirmationService)
         {
             _context = context;
             _passwordHasher = passwordHasher;
             _jwtProvider = jwtProvider;
-        }
-
-        public async Task<ErrorOr<List<Role>>> GetRolesByLoginAsync(string login)
-        {
-            try
-            {
-                var user = await _context.Users.
-                    Where(user => user.Login == login).
-                    Include(user => user.Roles).
-                    AsNoTracking().
-                    FirstOrDefaultAsync();
-
-                if(user is not null)
-                {
-                    return user.Roles;
-                }
-
-                return Error.NotFound(code: "UserService.GetRolesByLogin.NotFound",
-                    description: $"user with login: {login} was not found.");
-
-            }
-            catch(Exception ex)
-            {
-                Dictionary<string, object> metadata = new();
-                metadata.Add("Exception", ex.Message);
-
-                return Error.Failure(code: "UserService.GetRolesByLogin.Failure",
-                    "Error occured while getting user by login", metadata);
-            }
+            _emailConfirmationService = emailConfirmationService;
         }
 
         public async Task<ErrorOr<string>> LoginAsync(UserLoginRequest loginRequest)
@@ -53,7 +32,7 @@ namespace CarRentalAPI.Application.Services
             try
             {
                 var user = await _context.Users.
-                    Where(user => user.Login == loginRequest.Login).
+                    Where(user => user.Email == loginRequest.Email).
                     Include(user => user.Roles).FirstOrDefaultAsync();
 
                 if (user is not null)
@@ -67,7 +46,8 @@ namespace CarRentalAPI.Application.Services
                 }
                 else
                 {
-                    return Error.NotFound("UserService.Login.NotFound", description: $"User with login: {{{loginRequest.Login}}} was not found.");
+                    return Error.NotFound("UserService.Login.NotFound", description: 
+                        $"User with login: {{{loginRequest.Email}}} was not found.");
                 }
 
                 var token = _jwtProvider.GenerateToken(user);
@@ -77,52 +57,58 @@ namespace CarRentalAPI.Application.Services
             }
             catch(Exception ex)
             {
-                Dictionary<string, object> metadata = new();
-                metadata.Add("Exception", ex.Message);
-
+                Dictionary<string, object> metadata = new() { {"Exception",ex.Message } };
 
                 return Error.Failure("UserService.Login.Failure", "Failure on login", metadata);
             }
         }
 
-        public async Task<ErrorOr<Created>> RegistrateNewUserAsync(UserRegistrateRequest user)
+        public async Task<ErrorOr<VerificationCodeDetails>> SendEmailVerificationCodeAsync(string email,
+            CancellationToken cancellationToken)
         {
+            return await _emailConfirmationService.SendRegistrationCodeMessageAsync(email, cancellationToken);
+        }
+        public async Task<ErrorOr<Success>> IsUserNotExistsWithData(UserRegistrateRequest data)
+        {
+
+            var errors = new List<Error>();
+
             try
             {
-                if (await isUserAlreadyExists(user.Login))
+                if (await IsUserAlreadyExistsWithEmail(data.Email))
                 {
-                    Dictionary<string, object> metadata = new();
-                    metadata.Add("StatusCode", 409);
+                    Dictionary<string, object> metadata = new() { { "StatusCode", 409 } };
 
-
-                    return Error.Conflict("UserService.Registrate.Conflict", $"User with login: {user.Login} already exists.", metadata);
+                    errors.Add(Error.Conflict("UserService.Registrate.Conflict",
+                        $"User with login: {data.Email} already exists.", metadata));
                 }
 
+                if (await IsUserAlreadyExistsWithName(data.Username))
+                {
+                    Dictionary<string, object> metadata = new() { { "StatusCode", 409 } };
 
-                var roles = await _context.UsersRoles.ToListAsync();
+                    errors.Add(Error.Conflict("UserService.Registrate.Conflict",
+                        $"User with name: {data.Username} already exists.", metadata));
+                }
 
-                var standartUserRole = roles.Where(r => r.Name == "user").ToList();
+                if (errors.Count != 0)
+                {
+                    return errors;
+                }
 
-                var userEntity = new User(Guid.NewGuid(), user.Login, _passwordHasher.Generate(user.Password), standartUserRole);
-
-                await _context.Users.AddAsync(userEntity);
-                await _context.SaveChangesAsync();
-
-                return Result.Created;
+                return Result.Success;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Dictionary<string, object> metadata = new();
-                metadata.Add("Exception", ex.Message);
+                Dictionary<string, object> metadata = new() { { "Exception", ex.Message } };
 
-                return Error.Failure(code: "UserService.Registrate.Failure", 
+                return Error.Failure(code: "UserService.Registrate.Failure",
                     "Error occured while registration new user", metadata);
             }
         }
-
-        private async Task<bool> isUserAlreadyExists(string userLogin)
+        private async Task<bool> IsUserAlreadyExistsWithEmail(string userEmail)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Login == userLogin);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
 
             if(user is not null)
             {
@@ -130,6 +116,98 @@ namespace CarRentalAPI.Application.Services
             }
 
             return false;
+        }
+
+        private async Task<bool> IsUserAlreadyExistsWithName(string userName)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Name == userName);
+
+            if (user is not null)
+            {
+                return true;
+            }
+
+            return false;
+
+        }
+        private async Task<User> CreateUserAsync(UserRegistrateRequest user)
+        {
+            var roles = await _context.UsersRoles.ToListAsync();
+
+            var standartUserRole = roles.Where(r => r.Name == "user").ToList();
+
+            var userEntity = new User(
+                Guid.NewGuid(),
+                user.Email,
+                _passwordHasher.Generate(user.Password),
+                user.Username,
+                standartUserRole);
+
+            return userEntity;
+        }
+
+        public async Task<ErrorOr<Created>> RegistrateIfVerifiedAsync(
+            VerificationCodeDetails serverCode,
+            UserRegistrateRequest userRegistrationRequest,
+            string userCode,
+            CancellationToken cancellationToken)
+        {
+            var result = _emailConfirmationService.VerifyCode(serverCode, userCode);
+
+            if (result.IsError == true)
+            {
+                return Error.Failure(description: "Verification code was failed.");
+            }
+
+            var verificationResult = result.Value;
+
+            switch (verificationResult)
+            {
+                case VerificationResult.Verifed:
+                    return await OnVerifedAction(userRegistrationRequest, cancellationToken);
+
+                case VerificationResult.Outdated:
+                    return OnOutdatedAction();
+
+                case VerificationResult.Wrong:
+                    return OnWrongAction();
+
+                default:
+                    return Error.Failure("UserService.OnCheckigVerificationResult.Failure",
+                        "Произошла неизвестная ошибка.");
+            }
+        }
+        private async Task<ErrorOr<Created>> OnVerifedAction(
+
+            UserRegistrateRequest userRegistrationRequest,
+            CancellationToken cancellationToken)
+        {
+            var user = await CreateUserAsync(userRegistrationRequest);
+
+            try
+            {
+                await _context.AddAsync(user);
+                await _context.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                Dictionary<string, object> metadata = new() { { "StatusCode", 500 }, {"Exception",ex.Message } };
+
+                return Error.Failure("UserService.OnVerifiedAction.Failure", "Somethig went wrong on code verification",
+                    metadata);
+            }
+
+            return Result.Created;
+        }
+
+        private Error OnOutdatedAction()
+        {
+            return Error.Forbidden(description: "Code was outdated.");
+        }
+
+        private Error OnWrongAction()
+        {
+            return Error.Forbidden(description: "Wrong code.");
         }
     }
 }
