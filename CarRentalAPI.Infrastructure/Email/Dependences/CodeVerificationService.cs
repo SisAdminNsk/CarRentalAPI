@@ -8,10 +8,25 @@ namespace CarRentalAPI.Infrastructure.Email.Dependences
     {
         private static int VerificationCodeLifetimeInMinutes = 2;
 
+        private IConcurrentVerificationCodesStorage _codesStorage;
+
         private readonly TimeSpan _codeExpirationTime = TimeSpan.FromMinutes(VerificationCodeLifetimeInMinutes);
 
-        public ErrorOr<VerificationResult> Verify(VerificationCodeDetails serverCode, string userCode)
+        public CodeVerificationService(IConcurrentVerificationCodesStorage codesStorage)
         {
+            _codesStorage = codesStorage;
+        }
+
+        public ErrorOr<VerificationResult> Verify(string email, string userCode)
+        {
+            var result = _codesStorage.TryGetCode(key: email);
+
+            if (result.IsError)
+            {
+                return result.Errors;
+            }
+
+            var serverCode = result.Value;
 
             if (userCode == serverCode.Code)
             {
@@ -27,6 +42,7 @@ namespace CarRentalAPI.Infrastructure.Email.Dependences
 
             return VerificationResult.Wrong;
         }
+
         public TimeSpan GetCodeLifeTime()
         {
             return _codeExpirationTime;

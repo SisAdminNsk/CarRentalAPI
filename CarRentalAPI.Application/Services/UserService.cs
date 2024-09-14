@@ -63,7 +63,7 @@ namespace CarRentalAPI.Application.Services
             }
         }
 
-        public async Task<ErrorOr<VerificationCodeDetails>> SendEmailVerificationCodeAsync(string email,
+        public async Task<ErrorOr<Success>> SendEmailVerificationCodeAsync(string email,
             CancellationToken cancellationToken)
         {
             return await _emailConfirmationService.SendRegistrationCodeMessageAsync(email, cancellationToken);
@@ -147,12 +147,11 @@ namespace CarRentalAPI.Application.Services
         }
 
         public async Task<ErrorOr<Created>> RegistrateIfVerifiedAsync(
-            VerificationCodeDetails serverCode,
             UserRegistrateRequest userRegistrationRequest,
-            string userCode,
+            string code,
             CancellationToken cancellationToken)
         {
-            var result = _emailConfirmationService.VerifyCode(serverCode, userCode);
+            var result = _emailConfirmationService.VerifyCode(userRegistrationRequest.Email, code);
 
             if (result.IsError == true)
             {

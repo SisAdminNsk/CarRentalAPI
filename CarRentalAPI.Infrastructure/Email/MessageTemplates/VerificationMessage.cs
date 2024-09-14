@@ -10,8 +10,8 @@ namespace CarRentalAPI.Infrastructure.Email.MessageTemplates
             To.Add(new MailboxAddress("Получатель", destMail));
 
             Subject = "Код подтверждения";
-            Body = new BodyBuilder() { HtmlBody = $"<div style=\"color: green;\">Код подтверждения: {code}</div>" }.ToMessageBody();
-
+            Body = new BodyBuilder() { HtmlBody = $"<div Код подтверждения: style=\"color: green;\">{code}</div>" }.ToMessageBody();
+            
         }
     }
 }

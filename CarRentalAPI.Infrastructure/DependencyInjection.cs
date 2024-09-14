@@ -38,6 +38,7 @@ namespace CarRentalAPI.Infrastructure
             services.AddTransient<IEmailConfirmationService, EmailConfirmationService>();
             services.AddTransient<IVerificationCodeGenerator, Verification6DigitCodeGenerator>();
             services.AddTransient<ICodeVerificationService, CodeVerificationService>();
+            services.AddTransient<IConcurrentVerificationCodesStorage, ConcurrentVerificationCodesStorage>();
 
             return services;
         }

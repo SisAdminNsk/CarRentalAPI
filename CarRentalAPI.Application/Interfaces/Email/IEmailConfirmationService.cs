@@ -5,8 +5,8 @@ namespace CarRentalAPI.Application.Interfaces.Email
 {
     public interface IEmailConfirmationService
     {
-        Task<ErrorOr<VerificationCodeDetails>> SendRegistrationCodeMessageAsync(string destEmail, CancellationToken cancellationToken);
+        Task<ErrorOr<Success>> SendRegistrationCodeMessageAsync(string destEmail, CancellationToken cancellationToken);
 
-        ErrorOr<VerificationResult> VerifyCode(VerificationCodeDetails serverCode, string userCode);
+        ErrorOr<VerificationResult> VerifyCode(string email, string code);
     }
 }

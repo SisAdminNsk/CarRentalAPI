@@ -5,7 +5,7 @@ namespace CarRentalAPI.Application.Interfaces.Email
 {
     public interface ICodeVerificationService
     {
-        ErrorOr<VerificationResult> Verify(VerificationCodeDetails serverCode, string userCode);
+        ErrorOr<VerificationResult> Verify(string email, string userCode);
 
         TimeSpan GetCodeLifeTime();
     }
