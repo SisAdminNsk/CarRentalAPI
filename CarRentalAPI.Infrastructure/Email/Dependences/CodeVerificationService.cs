@@ -6,7 +6,7 @@ namespace CarRentalAPI.Infrastructure.Email.Dependences
 {
     public class CodeVerificationService : ICodeVerificationService
     {
-        private static int VerificationCodeLifetimeInMinutes = 2;
+        private static int VerificationCodeLifetimeInMinutes = 5;
 
         private IConcurrentVerificationCodesStorage _codesStorage;
 

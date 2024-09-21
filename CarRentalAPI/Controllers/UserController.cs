@@ -2,6 +2,7 @@
 using CarRentalAPI.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace CarRentalAPI.Controllers
 {
@@ -16,25 +17,52 @@ namespace CarRentalAPI.Controllers
         }
 
         [AllowAnonymous]
+        [HttpPost("SendVerificationCodeAgain")]
+        public async Task<ActionResult> SendVerificationCodeAgain([FromBody] string sendersEmail,
+            CancellationToken cancellationToken)
+        {
+            if (HttpContext.Session.Id == HttpContext.Session.GetString("SessionId"))
+            {
+                var errorOrVerificationCode = await _userService.SendEmailVerificationCodeAsync(sendersEmail, cancellationToken);
+
+                if (errorOrVerificationCode.IsError)
+                {
+                    return BadRequest(errorOrVerificationCode.Errors);
+                }
+
+                return Ok();
+            }
+
+            return Forbid();
+        }   
+
+        [AllowAnonymous]
         [HttpPost("BeginRegistrateUser")]
         public async Task<ActionResult> BeginRegistrateUser([FromBody] UserRegistrateRequest request,
             CancellationToken cancellationToken)
         {
             HttpContext.Session.SetString("SessionId", HttpContext.Session.Id);
 
-            var errorOrVerificationCode = await _userService.SendEmailVerificationCodeAsync(request.Email, cancellationToken);
+            var isUserAlreadyExists = await _userService.IsUserNotExistsWithData(request);
 
-            if (errorOrVerificationCode.IsError)
+            if (!isUserAlreadyExists.IsError)
             {
-                return BadRequest(errorOrVerificationCode.Errors);
+                var errorOrVerificationCode = await _userService.SendEmailVerificationCodeAsync(request.Email, cancellationToken);
+
+                if (errorOrVerificationCode.IsError)
+                {
+                    return BadRequest(errorOrVerificationCode.Errors);
+                }
+
+                return Ok(new EmailMessageResponse(200, $"Код подтверждения регистрации отправлен по адресу: {request.Email}"));
             }
 
-            return Ok(new EmailMessageResponse(200, $"Код подтверждения регистрации отправлен по адресу: {request.Email}"));
+            return Conflict(isUserAlreadyExists.Errors);
         }
 
         [AllowAnonymous]
         [HttpPost("EndRegistrateUser")]
-        public async Task<ActionResult> EndRegistrateUser([FromBody] UserRegistrateRequest request, string code,
+        public async Task<ActionResult> EndRegistrateUser([FromBody] UserRegistrateRequest request, [FromQuery] string code,
             CancellationToken cancellationToken)
         {
             if (HttpContext.Session.Id == HttpContext.Session.GetString("SessionId"))
@@ -60,7 +88,7 @@ namespace CarRentalAPI.Controllers
 
             if(errorOrToken.IsError)
             {
-                return BadRequest(errorOrToken.Errors);
+                return BadRequest(errorOrToken.FirstError);
             }
 
             return Ok(errorOrToken.Value);

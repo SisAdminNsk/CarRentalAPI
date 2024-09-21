@@ -18,7 +18,7 @@ namespace CarRentalAPI.Infrastructure.Email.Dependences
         {
             try
             {
-                _verificationCodesDetails.TryAdd(key: email, value: code);
+                _verificationCodesDetails.AddOrUpdate(email, code, (key, oldValue) => code);
             }
             catch (Exception ex)
             {

@@ -79,7 +79,7 @@ namespace CarRentalAPI.Application.Services
                 {
                     Dictionary<string, object> metadata = new() { { "StatusCode", 409 } };
 
-                    errors.Add(Error.Conflict("UserService.Registrate.Conflict",
+                    errors.Add(Error.Conflict("UserService.Registrate.Conflict.Email",
                         $"User with login: {data.Email} already exists.", metadata));
                 }
 
@@ -87,7 +87,7 @@ namespace CarRentalAPI.Application.Services
                 {
                     Dictionary<string, object> metadata = new() { { "StatusCode", 409 } };
 
-                    errors.Add(Error.Conflict("UserService.Registrate.Conflict",
+                    errors.Add(Error.Conflict("UserService.Registrate.Conflict.Username",
                         $"User with name: {data.Username} already exists.", metadata));
                 }
 
@@ -201,12 +201,12 @@ namespace CarRentalAPI.Application.Services
 
         private Error OnOutdatedAction()
         {
-            return Error.Forbidden(description: "Code was outdated.");
+            return Error.Forbidden(code: "Outdated", description: "Code was outdated.");
         }
 
         private Error OnWrongAction()
         {
-            return Error.Forbidden(description: "Wrong code.");
+            return Error.Forbidden(code: "WrongCode", description: "Wrong code.");
         }
     }
 }
