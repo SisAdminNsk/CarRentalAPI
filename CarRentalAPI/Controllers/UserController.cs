@@ -2,7 +2,6 @@
 using CarRentalAPI.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace CarRentalAPI.Controllers
 {
@@ -17,20 +16,19 @@ namespace CarRentalAPI.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("SendVerificationCodeAgain")]
-        public async Task<ActionResult> SendVerificationCodeAgain([FromBody] string sendersEmail,
-            CancellationToken cancellationToken)
+        [HttpGet("SendVerificationCodeAgain")]
+        public async Task<ActionResult> SendVerificationCodeAgain([FromQuery] string sendersEmail, CancellationToken cancellationToken)
         {
             if (HttpContext.Session.Id == HttpContext.Session.GetString("SessionId"))
             {
-                var errorOrVerificationCode = await _userService.SendEmailVerificationCodeAsync(sendersEmail, cancellationToken);
+                var errorOrVerificationCode = await _userService.SendEmailVerificationCodeAsync(sendersEmail,cancellationToken);
 
                 if (errorOrVerificationCode.IsError)
                 {
                     return BadRequest(errorOrVerificationCode.Errors);
                 }
 
-                return Ok();
+                return Ok($"Код повторно отправлен на почту: {sendersEmail}");
             }
 
             return Forbid();
