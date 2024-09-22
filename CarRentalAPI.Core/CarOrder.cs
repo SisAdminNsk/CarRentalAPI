@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using System.ComponentModel.DataAnnotations;
 
 namespace CarRentalAPI.Core
 {
@@ -8,6 +9,9 @@ namespace CarRentalAPI.Core
         public DateTime EndOfLease { get; set; }
         public CarsharingUser Customer { get; set; }
         public Car Car { get; set; }
+
+        [MaxLength(100)]
+        public string Сomment { get; set; }
 
         public CarOrder()
         {
