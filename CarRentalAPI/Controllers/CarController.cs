@@ -36,7 +36,7 @@ namespace CarRentalAPI.Controllers
         }
         [Authorize(Policy = "admin")]
 
-        [HttpPut("AddNewCar")]
+        [HttpPost("AddNewCar")]
         public async Task<ActionResult> AddNewCar(CarDTO car)
         {
             var errorOrCreated = await _garageManagmentService.AddNewCarAsync(car);

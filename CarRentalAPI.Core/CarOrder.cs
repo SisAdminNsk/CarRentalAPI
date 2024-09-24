@@ -9,9 +9,8 @@ namespace CarRentalAPI.Core
         public DateTime EndOfLease { get; set; }
         public CarsharingUser Customer { get; set; }
         public Car Car { get; set; }
-
         [MaxLength(100)]
-        public string Сomment { get; set; }
+        public string Comment { get; set; }
 
         public CarOrder()
         {
@@ -22,12 +21,14 @@ namespace CarRentalAPI.Core
             DateTime startOfLease,
             DateTime endOfLease,
             CarsharingUser customer,
-            Car car)
+            Car car,
+            string comment)
         {
+            Comment = comment;
             StartOfLease = startOfLease;
             EndOfLease = endOfLease;
             Customer = customer;
-            Car = car;
+            Car = car;          
         }
     }
 }
