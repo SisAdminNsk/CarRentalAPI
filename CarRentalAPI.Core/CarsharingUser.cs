@@ -14,6 +14,10 @@ namespace CarRentalAPI.Core
         [Required]
         [MaxLength(100)]
         public string Surname { get; set; }
+
+        [Required]
+        [MaxLength(100)]
+        public string Patronymic { get; set; }
         [Required]
         [Range(18, 100)]
         public int Age { get; set; }
@@ -25,11 +29,14 @@ namespace CarRentalAPI.Core
         {
             Id = Guid.NewGuid();
         }
-        public CarsharingUser(User user, int age, string name, string surname, string phone) 
+        public CarsharingUser(User user, int age, string name, string surname, string patronymic, string phone) 
         {
             User = user;
             Age = age;
+            Surname = surname;
+            Patronymic = patronymic;
             Name = name;
+            Phone = phone;
         }
     }
 }

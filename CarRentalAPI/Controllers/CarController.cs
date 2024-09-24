@@ -1,5 +1,6 @@
 using CarRentalAPI.Application.Interfaces;
 using CarRentalAPI.Contracts;
+using CarRentalAPI.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,7 +38,7 @@ namespace CarRentalAPI.Controllers
         [Authorize(Policy = "admin")]
 
         [HttpPost("AddNewCar")]
-        public async Task<ActionResult> AddNewCar(CarDTO car)
+        public async Task<ActionResult> AddNewCar(Car car)
         {
             var errorOrCreated = await _garageManagmentService.AddNewCarAsync(car);
 

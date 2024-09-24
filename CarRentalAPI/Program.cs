@@ -1,6 +1,7 @@
 
 using CarRentalAPI.Application.Extentions;
 using CarRentalAPI.Application.Mapping;
+using CarRentalAPI.BackgroundServices;
 using CarRentalAPI.Infrastructure;
 
 namespace CarRentalAPI
@@ -24,11 +25,12 @@ namespace CarRentalAPI
             builder.Services.AddSecurity();
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession();
+            builder.Services.AddHostedService<OutdatedReservationsCleaner>();
             //builder.Services.AddSession();
 
             builder.Services.AddWeightControl();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddAutoMapper(typeof(CarProfile));
+            builder.Services.AddAutoMapper(typeof(CarOrderProfile));
 
             var app = builder.Build();
 

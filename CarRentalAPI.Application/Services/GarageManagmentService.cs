@@ -13,19 +13,11 @@ namespace CarRentalAPI.Application.Services
         {
             _context = context;
         }
-        public async Task<ErrorOr<Created>> AddNewCarAsync(CarDTO car)
+        public async Task<ErrorOr<Created>> AddNewCarAsync(Car car)
         {
             try
             {
-                var carEntity = new Car(
-                    car.Id,
-                    car.Brand,
-                    car.Model,
-                    car.CarClass,
-                    car.CarImageURI,
-                    car.BaseRentalPricePerHour);
-
-                await _context.Cars.AddAsync(carEntity);
+                await _context.Cars.AddAsync(car);
                 await _context.SaveChangesAsync();
 
                 return Result.Created;
@@ -61,7 +53,7 @@ namespace CarRentalAPI.Application.Services
             }
         }
 
-        public async Task<ErrorOr<Updated>> UpdateCarAsync(Guid carId, CarDTO car)
+        public async Task<ErrorOr<Updated>> UpdateCarAsync(Guid carId, Car car)
         {
             try
             {

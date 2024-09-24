@@ -1,5 +1,6 @@
 ﻿using CarRentalAPI.Application.Interfaces;
 using CarRentalAPI.Application.Interfaces.Email;
+using CarRentalAPI.Application.Services;
 using CarRentalAPI.Infrastructure.Email;
 using CarRentalAPI.Infrastructure.Email.Dependences;
 using CarRentalAPI.Infrastructure.Security;
@@ -22,6 +23,12 @@ namespace CarRentalAPI.Infrastructure
         private static IServiceCollection AddPersistence(this IServiceCollection services)
         {
             services.AddDbContext<Context.Context, PostgresContext>();
+
+            services.AddScoped<ICarBookingService, CarBookingService>();
+            services.AddScoped<ICarService, CarService>();
+            services.AddScoped<IGarageManagmentService, GarageManagmentService>();
+            services.AddScoped<IUserService, UserService>();
+
             return services;
         }
 

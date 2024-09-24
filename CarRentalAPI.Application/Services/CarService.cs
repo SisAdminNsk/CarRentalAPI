@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CarRentalAPI.Application.Interfaces;
 using CarRentalAPI.Contracts;
+using CarRentalAPI.Core;
 using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,13 +19,13 @@ namespace CarRentalAPI.Application.Services
             _context = context;
         }
 
-        public async Task<ErrorOr<List<CarDTO>>> GetCarsByBrandAsync(string brand)
+        public async Task<ErrorOr<List<Car>>> GetCarsByBrandAsync(string brand)
         {
             try 
             {
                 var groupedByBrandCars = await _context.Cars.Where(c => c.Brand == brand).ToListAsync();
 
-                return _mapper.Map<List<CarDTO>>(groupedByBrandCars); 
+                return _mapper.Map<List<Car>>(groupedByBrandCars); 
             }
             catch (Exception ex)
             {
@@ -36,13 +37,13 @@ namespace CarRentalAPI.Application.Services
             }
         }
 
-        public async Task<ErrorOr<List<CarDTO>>> GetCarsByClassAsync(string carClass)
+        public async Task<ErrorOr<List<Car>>> GetCarsByClassAsync(string carClass)
         {
             try
             {
                 var groupedByClassCars = await _context.Cars.Where(c => c.CarClass == carClass).ToListAsync();
 
-                return _mapper.Map<List<CarDTO>>(groupedByClassCars);
+                return _mapper.Map<List<Car>>(groupedByClassCars);
             }
             catch (Exception ex)
             {
@@ -54,7 +55,7 @@ namespace CarRentalAPI.Application.Services
             }
         }
 
-        public async Task<ErrorOr<List<CarDTO>>> ShowAllAvailableCarsAsync()
+        public async Task<ErrorOr<List<Car>>> ShowAllAvailableCarsAsync()
         {
             try
             {
@@ -65,7 +66,7 @@ namespace CarRentalAPI.Application.Services
                 
                 var freeForBookingCars = await _context.Cars.Where(car => !busyCarsGuids.Contains(car.Id)).ToListAsync();
 
-                return _mapper.Map<List<CarDTO>>(freeForBookingCars);
+                return _mapper.Map<List<Car>>(freeForBookingCars);
             }
             catch(Exception ex)
             {
@@ -77,13 +78,13 @@ namespace CarRentalAPI.Application.Services
             }
         }
 
-        public async Task<ErrorOr<List<CarDTO>>> ShowAllCarsAsync()
+        public async Task<ErrorOr<List<Car>>> ShowAllCarsAsync()
         {
             try
             {
                 var cars =  await _context.Cars.ToListAsync();
 
-                return _mapper.Map<List<CarDTO>>(cars);
+                return _mapper.Map<List<Car>>(cars);
             }
             catch (Exception ex)
             {
