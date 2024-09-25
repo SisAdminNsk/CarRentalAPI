@@ -12,6 +12,10 @@
         public string Comment { get; set; }
         public decimal Price { get; set; }
 
+        public CarOrderResponse()
+        {
+
+        }
         public CarOrderResponse(
             Guid id,
             DateTime startOfLease,

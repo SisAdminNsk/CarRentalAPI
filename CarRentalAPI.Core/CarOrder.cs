@@ -7,7 +7,8 @@ namespace CarRentalAPI.Core
     {
         public DateTime StartOfLease { get; set; }
         public DateTime EndOfLease { get; set; }
-        public CarsharingUser Customer { get; set; }
+        public CarsharingUser CarsharingUser { get; set; }
+        public Guid CarsharingUserId { get; set; }
         public Car Car { get; set; }
         public Guid CarId { get; set; }
         [MaxLength(100)]
@@ -29,10 +30,13 @@ namespace CarRentalAPI.Core
             Comment = comment;
             StartOfLease = startOfLease;
             EndOfLease = endOfLease;
-            Customer = customer;
-            Car = car;
 
+            CarsharingUser = customer;
+            CarsharingUserId = customer?.Id ?? Guid.Empty;
+
+            Car = car;
             CarId = car?.Id ?? Guid.Empty;
+
             Price = price;
         }
     }

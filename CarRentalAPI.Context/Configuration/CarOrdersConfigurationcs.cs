@@ -11,7 +11,7 @@ namespace CarRentalAPI.Context.Configuration
         {
             builder.HasKey(co => co.Id);
             builder.HasOne(co => co.Car);
-            builder.HasOne(co => co.Customer).WithMany(cus => cus.Orders);
+            builder.HasOne(co => co.CarsharingUser).WithMany(cus => cus.Orders);
         }
     }
 }

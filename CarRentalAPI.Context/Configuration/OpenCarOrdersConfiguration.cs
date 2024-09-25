@@ -10,6 +10,8 @@ namespace CarRentalAPI.Context.Configuration
         {
             builder.HasKey(cco => cco.Id);
             builder.HasOne(cco => cco.CarOrder);
+
+            builder.HasOne(cco => cco.Car).WithOne(c => c.OpenCarOrder);
         }
     }
 }

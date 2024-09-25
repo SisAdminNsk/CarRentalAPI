@@ -3,6 +3,7 @@ using System;
 using CarRentalAPI.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CarRentalAPI.Infrastructure.Migrations
 {
     [DbContext(typeof(PostgresContext))]
-    partial class PostgresContextModelSnapshot : ModelSnapshot
+    [Migration("20240925151955_AddColumnCarIdToTableOpenCarOrders3")]
+    partial class AddColumnCarIdToTableOpenCarOrders3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,13 +67,13 @@ namespace CarRentalAPI.Infrastructure.Migrations
                     b.Property<Guid>("CarId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("CarsharingUserId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Comment")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("EndOfLease")
                         .HasColumnType("timestamp without time zone");
@@ -85,7 +88,7 @@ namespace CarRentalAPI.Infrastructure.Migrations
 
                     b.HasIndex("CarId");
 
-                    b.HasIndex("CarsharingUserId");
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("CarOrders");
                 });
@@ -134,9 +137,6 @@ namespace CarRentalAPI.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("CarId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("CarOrderId")
                         .HasColumnType("uuid");
 
@@ -146,8 +146,6 @@ namespace CarRentalAPI.Infrastructure.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CarId");
 
                     b.HasIndex("CarOrderId");
 
@@ -160,16 +158,10 @@ namespace CarRentalAPI.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("CarId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("CarOrderId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CarId")
-                        .IsUnique();
 
                     b.HasIndex("CarOrderId");
 
@@ -232,20 +224,20 @@ namespace CarRentalAPI.Infrastructure.Migrations
             modelBuilder.Entity("CarRentalAPI.Core.CarOrder", b =>
                 {
                     b.HasOne("CarRentalAPI.Core.Car", "Car")
-                        .WithMany("CarOrders")
+                        .WithMany()
                         .HasForeignKey("CarId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CarRentalAPI.Core.CarsharingUser", "CarsharingUser")
+                    b.HasOne("CarRentalAPI.Core.CarsharingUser", "Customer")
                         .WithMany("Orders")
-                        .HasForeignKey("CarsharingUserId")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Car");
 
-                    b.Navigation("CarsharingUser");
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("CarRentalAPI.Core.CarsharingUser", b =>
@@ -261,12 +253,6 @@ namespace CarRentalAPI.Infrastructure.Migrations
 
             modelBuilder.Entity("CarRentalAPI.Core.ClosedCarOrder", b =>
                 {
-                    b.HasOne("CarRentalAPI.Core.Car", null)
-                        .WithMany("ClosedCarOrders")
-                        .HasForeignKey("CarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("CarRentalAPI.Core.CarOrder", "CarOrder")
                         .WithMany()
                         .HasForeignKey("CarOrderId")
@@ -278,19 +264,11 @@ namespace CarRentalAPI.Infrastructure.Migrations
 
             modelBuilder.Entity("CarRentalAPI.Core.OpenCarOrder", b =>
                 {
-                    b.HasOne("CarRentalAPI.Core.Car", "Car")
-                        .WithOne("OpenCarOrder")
-                        .HasForeignKey("CarRentalAPI.Core.OpenCarOrder", "CarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("CarRentalAPI.Core.CarOrder", "CarOrder")
                         .WithMany()
                         .HasForeignKey("CarOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Car");
 
                     b.Navigation("CarOrder");
                 });
@@ -307,16 +285,6 @@ namespace CarRentalAPI.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("CarRentalAPI.Core.Car", b =>
-                {
-                    b.Navigation("CarOrders");
-
-                    b.Navigation("ClosedCarOrders");
-
-                    b.Navigation("OpenCarOrder")
                         .IsRequired();
                 });
 

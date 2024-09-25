@@ -33,9 +33,9 @@ namespace CarRentalAPI.Controllers
 
         [AllowAnonymous] // доступно пользователеям только с ролью Admin
         [HttpPost(("OpenCarReservation"))]
-        public async Task<ActionResult> OpenCarReservation(Guid carOrderId, DateTime startOfLease, DateTime endOfLease)
+        public async Task<ActionResult> OpenCarReservation(OpenCarReservationRequest openCarReservationRequest)
         {
-            var errorOrOpenedCarReservation = await _carBookingService.OpenCarReservationAsync(carOrderId, startOfLease, endOfLease);
+            var errorOrOpenedCarReservation = await _carBookingService.OpenCarReservationAsync(openCarReservationRequest);
 
             if(errorOrOpenedCarReservation.IsError)
             {
@@ -47,9 +47,9 @@ namespace CarRentalAPI.Controllers
 
         [AllowAnonymous]  // доступно пользователеям только с ролью Admin
         [HttpPost("CloseCarReservation")]
-        public async Task<ActionResult> CloseCarReservation(Guid openedCarOrderId, string status)
+        public async Task<ActionResult> CloseCarReservation(CloseCarReservationRequest closeCarReservationRequest)
         {
-            var errorOrClosedCarReservation = await _carBookingService.CloseCarReservationAsync(openedCarOrderId, status);
+            var errorOrClosedCarReservation = await _carBookingService.CloseCarReservationAsync(closeCarReservationRequest);
 
             if(errorOrClosedCarReservation.IsError)
             {
@@ -72,5 +72,34 @@ namespace CarRentalAPI.Controllers
 
             return Ok(errorOrDeleted.Value);
         }
+
+        [AllowAnonymous]
+        [HttpGet("GetCarOrdersByCarsharingUserId")]
+        public async Task<ActionResult> GetCarOrdersByCarsharingUserId(Guid carsharingUserId)
+        {
+            var errorOrCarOrders = await _carBookingService.GetCarOrdersByCarsharingUserIdAsync(carsharingUserId);
+
+            if (errorOrCarOrders.IsError)
+            {
+                return BadRequest(errorOrCarOrders.Errors);
+            }
+
+            return Ok(errorOrCarOrders.Value);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("GetAllCarOrders")]
+        public async Task<ActionResult> GetAllCarOrders()
+        {
+            var errorOrCarOrders = await _carBookingService.GetAllCarOrdersAsync();
+
+            if (errorOrCarOrders.IsError)
+            {
+                return BadRequest(errorOrCarOrders.Errors);
+            }
+
+            return Ok(errorOrCarOrders.Value);
+        }
+
     }
 }

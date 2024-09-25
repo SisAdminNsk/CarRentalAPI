@@ -16,10 +16,13 @@ namespace CarRentalAPI.Core
             Id = Guid.NewGuid();
         }
 
+        public Guid CarId { get; set; }
+
         public ClosedCarOrder(CarOrder carOrder, string status)
         {
             CarOrder = carOrder;
             Status = status;
+            CarId = carOrder.CarId;
         }
     }
 }

@@ -10,7 +10,10 @@ namespace CarRentalAPI.Core
         public string CarClass { get; set; }
         public decimal BaseRentalPricePerHour { get; set; }
         public string CarImageURI { get; set; }
+        public List<CarOrder> CarOrders { get; set; }
+        public OpenCarOrder OpenCarOrder { get; set; }
 
+        public List<ClosedCarOrder> ClosedCarOrders { get; set; }
         public Car()
         {
             Id = Guid.NewGuid();

@@ -3,6 +3,7 @@ using System;
 using CarRentalAPI.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CarRentalAPI.Infrastructure.Migrations
 {
     [DbContext(typeof(PostgresContext))]
-    partial class PostgresContextModelSnapshot : ModelSnapshot
+    [Migration("20240925153229_AddColumnCarIdToTableOpenCarOrders5")]
+    partial class AddColumnCarIdToTableOpenCarOrders5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,13 +67,13 @@ namespace CarRentalAPI.Infrastructure.Migrations
                     b.Property<Guid>("CarId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("CarsharingUserId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Comment")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("EndOfLease")
                         .HasColumnType("timestamp without time zone");
@@ -85,7 +88,7 @@ namespace CarRentalAPI.Infrastructure.Migrations
 
                     b.HasIndex("CarId");
 
-                    b.HasIndex("CarsharingUserId");
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("CarOrders");
                 });
@@ -134,7 +137,7 @@ namespace CarRentalAPI.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("CarId")
+                    b.Property<Guid?>("CarId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("CarOrderId")
@@ -237,15 +240,15 @@ namespace CarRentalAPI.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CarRentalAPI.Core.CarsharingUser", "CarsharingUser")
+                    b.HasOne("CarRentalAPI.Core.CarsharingUser", "Customer")
                         .WithMany("Orders")
-                        .HasForeignKey("CarsharingUserId")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Car");
 
-                    b.Navigation("CarsharingUser");
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("CarRentalAPI.Core.CarsharingUser", b =>
@@ -263,9 +266,7 @@ namespace CarRentalAPI.Infrastructure.Migrations
                 {
                     b.HasOne("CarRentalAPI.Core.Car", null)
                         .WithMany("ClosedCarOrders")
-                        .HasForeignKey("CarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CarId");
 
                     b.HasOne("CarRentalAPI.Core.CarOrder", "CarOrder")
                         .WithMany()

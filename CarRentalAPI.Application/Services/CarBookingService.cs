@@ -1,7 +1,7 @@
-﻿using CarRentalAPI.Application.Interfaces;
+﻿using AutoMapper;
+using CarRentalAPI.Application.Interfaces;
 using CarRentalAPI.Contracts;
 using CarRentalAPI.Core;
-
 using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,10 +10,12 @@ namespace CarRentalAPI.Application.Services
     public class CarBookingService : ICarBookingService
     {
         private Context.Context _context;
+        private readonly IMapper _mapper;
 
-        public CarBookingService(Context.Context context)
+        public CarBookingService(Context.Context context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<ErrorOr<Success>> CloseAllOutdatedOpenedCarReservatiosAsync(string status = "OutOfTime")
@@ -49,25 +51,25 @@ namespace CarRentalAPI.Application.Services
             }
         }
 
-        public async Task<ErrorOr<ClosedCarOrder>> CloseCarReservationAsync(Guid openCarOrderId, string status)
+        public async Task<ErrorOr<CloseCarReservationRequest>> CloseCarReservationAsync(CloseCarReservationRequest closeCarOrderRequest)
         {
             try
             {
                 var openCarOrder = await _context.OpenCarOrders.Include(oco => oco.CarOrder).AsNoTracking().
-                    Where(oco => oco.Id == openCarOrderId).AsNoTracking().FirstOrDefaultAsync();
+                    Where(oco => oco.Id == closeCarOrderRequest.OpenedCarOrderId).AsNoTracking().FirstOrDefaultAsync();
 
                 if(openCarOrder is null)
                 {
-                    return Error.NotFound("OpenCarOrder.NotFound", $"OpenCarOrder with GUID: {openCarOrderId} " +
-                        $"was not found in database.");
+                    return Error.NotFound("OpenCarOrder.NotFound", $"OpenCarOrder with GUID: " +
+                        $"{closeCarOrderRequest.OpenedCarOrderId} was not found in database.");
                 }
 
-                var closedCarOrder = new ClosedCarOrder(openCarOrder.CarOrder, status);
+                var closedCarOrder = new ClosedCarOrder(openCarOrder.CarOrder, closeCarOrderRequest.Status);
 
                 _context.OpenCarOrders.Remove(openCarOrder);
                 await _context.SaveChangesAsync();
 
-                return closedCarOrder;
+                return closeCarOrderRequest;
             }
             catch(Exception ex)
             {
@@ -113,7 +115,7 @@ namespace CarRentalAPI.Application.Services
             }
         }
 
-        public async  Task<ErrorOr<Deleted>> DeleteCarOrderAsync(Guid carOrderId)
+        public async Task<ErrorOr<Deleted>> DeleteCarOrderAsync(Guid carOrderId)
         {
             try
             {
@@ -136,11 +138,17 @@ namespace CarRentalAPI.Application.Services
             }
         }
 
-        public async Task<ErrorOr<List<CarOrder>>> GetAllCarOrdersAsync()
+        public async Task<ErrorOr<List<CarOrderResponse>>> GetAllCarOrdersAsync()
         {
             try
             {
-                return await _context.CarOrders.ToListAsync();
+                var carOrders = await _context.CarOrders.
+                    AsNoTracking().
+                    Include(co => co.CarsharingUser).
+                    AsNoTracking().
+                    ToListAsync();
+
+                return _mapper.Map<List<CarOrderResponse>>(carOrders);
             }
             catch(Exception ex)
             {
@@ -148,11 +156,15 @@ namespace CarRentalAPI.Application.Services
             }
         }
 
-        public async Task<ErrorOr<List<ClosedCarOrder>>> GetAllClosedCarOrdersAsync()
+        public async Task<ErrorOr<List<ClosedCarReservationResponse>>> GetAllClosedCarOrdersAsync()
         {
             try
             {
-                return await _context.ClosedCarOrders.ToListAsync();
+                var closedCarOrders = await _context.ClosedCarOrders.
+                    AsNoTracking().
+                    ToListAsync();
+
+                return _mapper.Map<List<ClosedCarReservationResponse>>(closedCarOrders);
             }
             catch(Exception ex)
             {
@@ -160,11 +172,15 @@ namespace CarRentalAPI.Application.Services
             }
         }
 
-        public async Task<ErrorOr<List<OpenCarOrder>>> GetAllOpenedCarOrdersAsync()
+        public async Task<ErrorOr<List<OpenedCarReservationResponse>>> GetAllOpenedCarOrdersAsync()
         {
             try
             {
-                return await _context.OpenCarOrders.ToListAsync();
+                var openedCarOrders =  await _context.OpenCarOrders.
+                    AsNoTracking().
+                    ToListAsync();
+
+                return _mapper.Map<List<OpenedCarReservationResponse>>(openedCarOrders);
             }
             catch(Exception ex)
             {
@@ -172,30 +188,76 @@ namespace CarRentalAPI.Application.Services
             }
         }
 
-        public Task<ErrorOr<List<CarOrder>>> GetCarOrdersByCarsharingUserIdAsync(Guid carsharingUserId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<ErrorOr<List<ClosedCarOrder>>> GetClosedCarOrdersByCarsharingUserIdAsync(Guid carsharingUserId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<ErrorOr<List<OpenCarOrder>>> GetOpenedCarOrdersByCarsharingUserIdAsync(Guid carsharingUserId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<ErrorOr<OpenCarOrder>> OpenCarReservationAsync(Guid carOrderId, DateTime startOfLease, DateTime endOfLease)
+        public async Task<ErrorOr<List<CarOrderResponse>>> GetCarOrdersByCarsharingUserIdAsync(Guid carsharingUserId)
         {
             try
             {
-                var carOrder = await _context.CarOrders.FindAsync(carOrderId);
+                var carOrders = await _context.CarOrders.
+                    AsNoTracking().
+                    Include(co => co.CarsharingUser).
+                    AsNoTracking().
+                    Where(co => co.CarsharingUserId == carsharingUserId)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                return _mapper.Map<List<CarOrderResponse>>(carOrders);
+            }
+            catch(Exception ex)
+            {
+                return Error.Failure("CarBookingService.GetCarOrdersByCarsharingUserIdAsync.Failure", description: ex.Message);
+            }
+        }
+
+        public async Task<ErrorOr<List<ClosedCarReservationResponse>>> GetClosedCarOrdersByCarsharingUserIdAsync(Guid carsharingUserId)
+        {
+            try
+            {
+                var closedCarOrders = await _context.ClosedCarOrders.
+                    AsNoTracking().
+                    Include(cco => cco.CarOrder).
+                    AsNoTracking().
+                    Where(cco => cco.CarOrder.CarsharingUserId == carsharingUserId).
+                    AsNoTracking().
+                    ToListAsync();
+
+                return _mapper.Map<List<ClosedCarReservationResponse>>(closedCarOrders);
+            }
+            catch(Exception ex)
+            {
+                return Error.Failure("CarBookingService.GetClosedCarOrdersByCarsharingUserIdAsync.Failure", description: ex.Message);
+            }
+        }
+
+        public async Task<ErrorOr<List<OpenedCarReservationResponse>>> GetOpenedCarOrdersByCarsharingUserIdAsync(Guid carsharingUserId)
+        {
+            try
+            {
+                var openedCarOrders = await _context.OpenCarOrders.
+                    AsNoTracking()
+                    .Include(oco => oco.CarOrder).
+                    AsNoTracking().
+                    Where(oco => oco.CarOrder.CarsharingUserId == carsharingUserId)
+                    .AsNoTracking().
+                    ToListAsync();
+
+                return _mapper.Map<List<OpenedCarReservationResponse>>(openedCarOrders);    
+            }
+            catch (Exception ex)
+            {
+                return Error.Failure("CarBookingService.GetOpenedCarOrdersByCarsharingUserIdAsync.Failure", description: ex.Message);
+            }
+        }
+
+        public async Task<ErrorOr<OpenCarReservationRequest>> OpenCarReservationAsync(OpenCarReservationRequest openCarReservationRequest)
+        {
+            try
+            {
+                var carOrder = await _context.CarOrders.FindAsync(openCarReservationRequest.CarOrderId);
 
                 if(carOrder is null)
                 {
-                    return Error.NotFound("CarOrder.NotFound", $"CarOrder with GUID: {carOrderId} was not found in database.");
+                    return Error.NotFound("CarOrder.NotFound", $"CarOrder with GUID: {openCarReservationRequest.CarOrderId} " +
+                        $"was not found in database.");
                 }
 
 
@@ -204,15 +266,16 @@ namespace CarRentalAPI.Application.Services
                     return Error.Conflict("CarIsBusy.Conflict", $"Car with GUID: {carOrder.CarId} is busy for booking now.");
                 }
 
-                carOrder.StartOfLease = startOfLease;
-                carOrder.EndOfLease = endOfLease;
+                carOrder.StartOfLease = openCarReservationRequest.StartOfLease;
+                carOrder.EndOfLease = openCarReservationRequest.EndOfLease;
+                carOrder.Price = openCarReservationRequest.Price;
 
                 var openCarReservation = new OpenCarOrder(carOrder);
                  
                 await _context.OpenCarOrders.AddAsync(openCarReservation);
                 await _context.SaveChangesAsync();
 
-                return openCarReservation;
+                return openCarReservationRequest;
 
             }
             catch(Exception ex)
@@ -221,9 +284,9 @@ namespace CarRentalAPI.Application.Services
             }
         }
 
-        private async Task<bool> IsCarFreeForBooking(Guid carId)
+        public async Task<bool> IsCarFreeForBooking(Guid carId)
         {
-            return await _context.CarOrders.AnyAsync(co => co.CarId == carId);
+            return await _context.OpenCarOrders.AnyAsync(co => co.CarId == carId);
         }
     }
 }
