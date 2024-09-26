@@ -7,16 +7,14 @@ namespace CarRentalAPI.Core
     public class CarsharingUser : Entity<Guid>
     {
         public User User { get; set; }
+        public Guid UserId { get; set; }
         public List<CarOrder> Orders { get; set; }
-        [Required]
-        [MaxLength(100)]
+        [CarsharingUserInitialsValidation]
         public string Name {  get; set; }
-        [Required]
-        [MaxLength(100)]
+        [CarsharingUserInitialsValidation]
         public string Surname { get; set; }
 
-        [Required]
-        [MaxLength(100)]
+        [CarsharingUserInitialsValidation]
         public string Patronymic { get; set; }
         [Required]
         [Range(18, 100)]
@@ -37,6 +35,8 @@ namespace CarRentalAPI.Core
             Patronymic = patronymic;
             Name = name;
             Phone = phone;
+
+            UserId = user.Id;
         }
     }
 }

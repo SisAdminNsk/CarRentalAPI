@@ -15,6 +15,9 @@ namespace CarRentalAPI.Core.Validation
 
                     return ValidationResult.Success;
                 }
+
+                return new ValidationResult($"CarOrderStatus со значением: {carOrderStatus} не найден в справочнике" +
+                    $"доступных статусов.");
             }
 
             return new ValidationResult($"Invalid Type for attribute " +
