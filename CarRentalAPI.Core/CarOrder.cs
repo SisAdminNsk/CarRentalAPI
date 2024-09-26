@@ -1,4 +1,5 @@
-﻿using CSharpFunctionalExtensions;
+﻿using CarRentalAPI.Core.Validation;
+using CSharpFunctionalExtensions;
 using System.ComponentModel.DataAnnotations;
 
 namespace CarRentalAPI.Core
@@ -14,6 +15,9 @@ namespace CarRentalAPI.Core
         [MaxLength(100)]
         public string Comment { get; set; }
         public decimal Price { get; set; }
+        [Required]
+        [CarOrderStatusValidation]
+        public string Status { get; set; }
         public CarOrder()
         {
             Id = Guid.NewGuid();
@@ -25,7 +29,8 @@ namespace CarRentalAPI.Core
             CarsharingUser customer,
             Car car,
             string comment,
-            decimal price)
+            decimal price, 
+            string status)
         {
             Comment = comment;
             StartOfLease = startOfLease;
@@ -38,6 +43,8 @@ namespace CarRentalAPI.Core
             CarId = car?.Id ?? Guid.Empty;
 
             Price = price;
+
+            Status = status;
         }
     }
 }

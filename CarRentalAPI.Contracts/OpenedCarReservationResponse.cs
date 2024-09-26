@@ -6,7 +6,7 @@
         public Guid CarId { get; set; }
         public string CarName { get; set; }
         public string CarImageUri { get; set; }
-        public int RentalTimeRemainInHours { get; set; }
+        public int RentalTimeRemainInMinutes { get; set; }
 
 
         public decimal Price { get; set; }
@@ -15,7 +15,7 @@
             Guid carId, 
             string carName,
             string carImageUri,
-            int rentalTimeRemainInHours, 
+            int rentalTimeRemainInMinutes, 
             DateOnly deadlineDate,
             TimeOnly deadLineTime)
         {
@@ -23,7 +23,12 @@
             CarId = carId;
             CarName = carName;
             CarImageUri = carImageUri;
-            RentalTimeRemainInHours = rentalTimeRemainInHours;
+            RentalTimeRemainInMinutes = rentalTimeRemainInMinutes;
+        }
+
+        public OpenedCarReservationResponse()
+        {
+
         }
     }
 }

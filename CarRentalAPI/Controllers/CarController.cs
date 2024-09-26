@@ -26,7 +26,7 @@ namespace CarRentalAPI.Controllers
         [HttpGet("GetAllCars")]
         public async Task<ActionResult> GetAllCars()
         {
-            var errorOrAllCars = await _carService.ShowAllCarsAsync();
+            var errorOrAllCars = await _carService.GetAllCarsAsync();
 
             if (errorOrAllCars.IsError)
             {

@@ -101,5 +101,88 @@ namespace CarRentalAPI.Controllers
             return Ok(errorOrCarOrders.Value);
         }
 
+        [AllowAnonymous]
+        [HttpGet("GetAllNotConsideredCarOrders")]
+        public async Task<ActionResult> GetAllNotConsideredCarOrders()
+        {
+            var errorOrNotConsideredCarOrders = await _carBookingService.GetAllNotConsideredCarOrders();
+
+            if (errorOrNotConsideredCarOrders.IsError)
+            {
+                return BadRequest(errorOrNotConsideredCarOrders.Errors);
+            }
+
+            return Ok(errorOrNotConsideredCarOrders.Value);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("GetAllOpenedCarReservations")]
+        public async Task<ActionResult> GetAllOpenedCarReservations()
+        {
+            var errorOrOpenedCarReservations = await _carBookingService.GetAllOpenedCarOrdersAsync();
+
+            if (errorOrOpenedCarReservations.IsError)
+            {
+                return BadRequest(errorOrOpenedCarReservations.Errors);
+            }
+
+            return Ok(errorOrOpenedCarReservations.Value);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("GetOpenedCarReservationsByCarsharingUserIdAsync")]
+        public async Task<ActionResult> GetOpenedCarReservationsByCarsharingUserIdAsync(Guid carsharingUserId)
+        {
+            var errorOrOpenedCarReservations = await _carBookingService.GetOpenedCarOrdersByCarsharingUserIdAsync(carsharingUserId);
+
+            if (errorOrOpenedCarReservations.IsError)
+            {
+                return BadRequest(errorOrOpenedCarReservations.Errors);
+            }
+
+            return Ok(errorOrOpenedCarReservations.Value);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("GetAllClosedCarReservations")]
+        public async Task<ActionResult> GetAllClosedCarReservations()
+        {
+            var errorOrClosedCarReservations = await _carBookingService.GetAllClosedCarOrdersAsync();
+
+            if (errorOrClosedCarReservations.IsError)
+            {
+                return BadRequest(errorOrClosedCarReservations.Errors);
+            }
+
+            return Ok(errorOrClosedCarReservations.Value);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("GetClosedCarReservationsByCarsharingUserId")]
+        public async Task<ActionResult> GetClosedCarReservationsByCarsharingUserId(Guid carsharingUserId)
+        {
+            var errorOrClosedCarReservations = await _carBookingService.GetClosedCarOrdersByCarsharingUserIdAsync(carsharingUserId);
+
+            if (errorOrClosedCarReservations.IsError)
+            {
+                return BadRequest(errorOrClosedCarReservations.Errors);
+            }
+
+            return Ok(errorOrClosedCarReservations.Value);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("IsCarFreeForBooking")]
+        public async Task<ActionResult> IsCarFreeForBooking(Guid carId)
+        {
+            var errorOrCarStatusResponse = await _carBookingService.IsCarFreeForBooking(carId);
+
+            if (errorOrCarStatusResponse.IsError)
+            {
+                return BadRequest(errorOrCarStatusResponse.Errors);
+            }
+
+            return Ok(errorOrCarStatusResponse.Value);
+        }
     }
 }

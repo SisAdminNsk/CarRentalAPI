@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using CarRentalAPI.Application.Interfaces;
-using CarRentalAPI.Contracts;
 using CarRentalAPI.Core;
 using ErrorOr;
 using Microsoft.EntityFrameworkCore;
@@ -55,7 +54,7 @@ namespace CarRentalAPI.Application.Services
             }
         }
 
-        public async Task<ErrorOr<List<Car>>> ShowAllAvailableCarsAsync()
+        public async Task<ErrorOr<List<Car>>> GetAllAvailableCarsAsync()
         {
             try
             {
@@ -78,11 +77,13 @@ namespace CarRentalAPI.Application.Services
             }
         }
 
-        public async Task<ErrorOr<List<Car>>> ShowAllCarsAsync()
+        public async Task<ErrorOr<List<Car>>> GetAllCarsAsync()
         {
             try
             {
-                var cars =  await _context.Cars.ToListAsync();
+                var cars = await _context.Cars.
+                    AsNoTracking().
+                    ToListAsync();
 
                 return _mapper.Map<List<Car>>(cars);
             }

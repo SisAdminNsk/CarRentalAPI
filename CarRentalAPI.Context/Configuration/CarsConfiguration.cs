@@ -10,8 +10,6 @@ namespace CarRentalAPI.Context.Configuration
         public void Configure(EntityTypeBuilder<Car> builder)
         { 
             builder.HasKey(p => p.Id);
-
-            builder.HasOne(c => c.OpenCarOrder).WithOne(co => co.Car);
         }
     }
 }

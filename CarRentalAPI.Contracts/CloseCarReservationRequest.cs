@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CarRentalAPI.Core.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace CarRentalAPI.Contracts
 {
@@ -6,7 +7,7 @@ namespace CarRentalAPI.Contracts
     {
         public Guid OpenedCarOrderId { get; set; }
         [Required]
-        [MaxLength(100)]
+        [CarOrderStatusValidation]
         public string Status { get; set; }
         public CloseCarReservationRequest(Guid openedCarOrderId, string status) 
         {

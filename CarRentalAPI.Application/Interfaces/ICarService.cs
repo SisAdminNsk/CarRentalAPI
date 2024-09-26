@@ -6,8 +6,8 @@ namespace CarRentalAPI.Application.Interfaces
 {
     public interface ICarService
     {
-        Task<ErrorOr<List<Car>>> ShowAllCarsAsync();
-        Task<ErrorOr<List<Car>>> ShowAllAvailableCarsAsync();
+        Task<ErrorOr<List<Car>>> GetAllCarsAsync();
+        Task<ErrorOr<List<Car>>> GetAllAvailableCarsAsync();
         Task<ErrorOr<List<Car>>> GetCarsByBrandAsync(string brand);
         Task<ErrorOr<List<Car>>> GetCarsByClassAsync(string carClass);
     }
