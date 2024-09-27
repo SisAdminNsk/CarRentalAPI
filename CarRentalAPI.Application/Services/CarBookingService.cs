@@ -28,7 +28,7 @@ namespace CarRentalAPI.Application.Services
                     .Where(order => order.EndOfLease <= DateTime.UtcNow).
                     ToListAsync();
 
-                outdatedOpenedCarOrders.ForEach(order => order.Status = CarOrdersStatus.OutOfTime);
+               outdatedOpenedCarOrders.ForEach(order => order.Status = CarOrdersStatus.OutOfTime);
 
                 await _context.SaveChangesAsync();
 

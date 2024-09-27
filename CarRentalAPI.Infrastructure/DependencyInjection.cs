@@ -28,6 +28,7 @@ namespace CarRentalAPI.Infrastructure
             services.AddScoped<ICarService, CarService>();
             services.AddScoped<IGarageManagmentService, GarageManagmentService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ICarsharingUsersService, CarsharingUsersService>();
 
             return services;
         }

@@ -27,7 +27,7 @@ namespace CarRentalAPI.Application.Services
             _emailConfirmationService = emailConfirmationService;
         }
 
-        public async Task<ErrorOr<string>> LoginAsync(UserLoginRequest loginRequest)
+        public async Task<ErrorOr<LoginResponse>> LoginAsync(UserLoginRequest loginRequest)
         {
             try
             {
@@ -52,7 +52,7 @@ namespace CarRentalAPI.Application.Services
 
                 var token = _jwtProvider.GenerateToken(user);
 
-                return token;
+                return new LoginResponse(token, user.Id);
 
             }
             catch(Exception ex)

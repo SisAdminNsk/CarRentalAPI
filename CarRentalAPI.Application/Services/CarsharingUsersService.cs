@@ -74,6 +74,8 @@ namespace CarRentalAPI.Application.Services
                 var carsharingUser = await _context.CarsharingUsers.
                     AsNoTracking().
                     Where(cu => cu.UserId == userId).
+                    Include(cu => cu.User).
+                    AsNoTracking().
                     FirstOrDefaultAsync();
 
                 if(carsharingUser is null)

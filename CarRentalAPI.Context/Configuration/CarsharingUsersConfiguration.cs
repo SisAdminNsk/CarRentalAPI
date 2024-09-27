@@ -10,6 +10,7 @@ namespace CarRentalAPI.Context.Configuration
         public void Configure(EntityTypeBuilder<CarsharingUser> builder)
         {
             builder.HasMany(cu => cu.Orders).WithOne(or => or.CarsharingUser);
+            builder.HasOne(cu => cu.User);
         }
     }
 }

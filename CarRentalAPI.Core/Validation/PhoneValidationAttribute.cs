@@ -30,12 +30,7 @@ namespace CarRentalAPI.Core.Validation
                 return false;
             }
 
-            if (userPhone.Length != 11)
-            {
-                return false;
-            }
-
-            string pattern = @"^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$";
+            string pattern = @"^(7|8|9)\d{10}$";
 
             try
             {

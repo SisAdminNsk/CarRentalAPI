@@ -11,6 +11,6 @@ namespace CarRentalAPI.Application.Interfaces
             string code,
               CancellationToken cancellationToken);
         Task<ErrorOr<Success>> SendEmailVerificationCodeAsync(string email, CancellationToken cancellationToken);
-        Task<ErrorOr<string>> LoginAsync(UserLoginRequest loginRequest);
+        Task<ErrorOr<LoginResponse>> LoginAsync(UserLoginRequest loginRequest);
     }
 }
