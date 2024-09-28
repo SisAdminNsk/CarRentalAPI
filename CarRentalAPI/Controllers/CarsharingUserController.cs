@@ -16,7 +16,7 @@ namespace CarRentalAPI.Controllers
             _carsharingUserService = carsharingUsersService;
         }
 
-        [AllowAnonymous]
+        [Authorize(Policy = "user")]
         [HttpPost("CreateOrUpdateCarsharingUser")]
         public async Task<ActionResult> CreateOrUpdateCarsharingUser([FromBody] CreateCarsharingUserRequest request)
         {

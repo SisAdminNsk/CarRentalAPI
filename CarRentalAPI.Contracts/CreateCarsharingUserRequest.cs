@@ -5,7 +5,7 @@ namespace CarRentalAPI.Contracts
 {
     public class CreateCarsharingUserRequest
     {
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
         [CarsharingUserInitialsValidation]
         public string Name { get; set; }
         [CarsharingUserInitialsValidation]
@@ -24,7 +24,7 @@ namespace CarRentalAPI.Contracts
 
         public CreateCarsharingUserRequest(
 
-            Guid userId,
+            string userId,
             string name,
             string surname,
             string patronymic,

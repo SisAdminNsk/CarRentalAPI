@@ -22,7 +22,7 @@ namespace CarRentalAPI.Application.Services
         {
             try
             {
-                var foreignUserEntity = await _context.Users.FindAsync(createCarsharingUserRequest.UserId);
+                var foreignUserEntity = await _context.Users.FindAsync(Guid.Parse(createCarsharingUserRequest.UserId));
 
                 if(foreignUserEntity is null) 
                 {
@@ -31,7 +31,7 @@ namespace CarRentalAPI.Application.Services
                 }
 
                 var carsharingUser = await _context.CarsharingUsers.
-                    Where(cu => cu.UserId == createCarsharingUserRequest.UserId).
+                    Where(cu => cu.UserId.ToString() == createCarsharingUserRequest.UserId).
                     FirstOrDefaultAsync();
 
                 if(carsharingUser is null)
