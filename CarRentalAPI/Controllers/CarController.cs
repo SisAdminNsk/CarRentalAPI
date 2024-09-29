@@ -1,5 +1,4 @@
 using CarRentalAPI.Application.Interfaces;
-using CarRentalAPI.Contracts;
 using CarRentalAPI.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,8 +20,8 @@ namespace CarRentalAPI.Controllers
             _carService = carService;
             _garageManagmentService = garageManagmentService;
         }
-        [Authorize(Policy = "user")]
-
+        //[Authorize(Policy = "user")]
+        [AllowAnonymous]
         [HttpGet("GetAllCars")]
         public async Task<ActionResult> GetAllCars()
         {

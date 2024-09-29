@@ -10,7 +10,7 @@ namespace CarRentalAPI.Controllers
     [Route("v1/[controller]")]
     public class CarsharingUserController : APIController
     {
-        private readonly ICarsharingUsersService _carsharingUserService;
+        private readonly ICarsharingUsersService _carsharingUserService; 
         public CarsharingUserController(ILogger<APIController> logger, ICarsharingUsersService carsharingUsersService) : base(logger)
         {
             _carsharingUserService = carsharingUsersService;

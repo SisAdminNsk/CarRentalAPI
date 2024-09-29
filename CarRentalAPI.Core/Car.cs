@@ -9,6 +9,7 @@ namespace CarRentalAPI.Core
         public int Power { get; set; }
         public string CarClass { get; set; }
         public decimal BaseRentalPricePerHour { get; set; }
+        public decimal AccelerationTo100 { get; set; }
         public string CarImageURI { get; set; }
         public Car()
         {
@@ -21,7 +22,8 @@ namespace CarRentalAPI.Core
             string model,
             string carClass,
             string carImageURI,
-            decimal baseRentalPricePerHour)
+            decimal baseRentalPricePerHour,
+            decimal accelerationTo100)
         {
             Id = id;
             Brand = brand;
@@ -29,6 +31,7 @@ namespace CarRentalAPI.Core
             CarClass = carClass;
             CarImageURI = carImageURI;
             BaseRentalPricePerHour = baseRentalPricePerHour;
+            AccelerationTo100 = accelerationTo100;
         }
     }
 }
