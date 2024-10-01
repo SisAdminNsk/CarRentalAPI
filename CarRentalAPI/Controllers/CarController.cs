@@ -1,5 +1,7 @@
 using CarRentalAPI.Application.Interfaces;
+using CarRentalAPI.Contracts;
 using CarRentalAPI.Core;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,8 +22,8 @@ namespace CarRentalAPI.Controllers
             _carService = carService;
             _garageManagmentService = garageManagmentService;
         }
-        //[Authorize(Policy = "user")]
-        [AllowAnonymous]
+
+        [Authorize(Policy = "user")]
         [HttpGet("GetAllCars")]
         public async Task<ActionResult> GetAllCars()
         {
@@ -34,8 +36,22 @@ namespace CarRentalAPI.Controllers
 
             return Ok(errorOrAllCars.Value);
         }
-        [Authorize(Policy = "admin")]
 
+        [AllowAnonymous]
+        [HttpGet("GetCars")]
+        public async Task<ActionResult> GetCars([FromQuery] PaginationsParamsRequest paginationsParams)
+        {
+            var errorOrCars = await _carService.GetCars(paginationsParams);
+
+            if (errorOrCars.IsError)
+            {
+                return BadRequest(errorOrCars.Value);
+            }
+
+            return Ok(errorOrCars.Value);
+        }
+
+        [Authorize(Policy = "admin")]
         [HttpPost("AddNewCar")]
         public async Task<ActionResult> AddNewCar(Car car)
         {

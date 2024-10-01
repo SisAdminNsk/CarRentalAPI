@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CarRentalAPI.Application.Interfaces;
+using CarRentalAPI.Contracts;
 using CarRentalAPI.Core;
 using ErrorOr;
 using Microsoft.EntityFrameworkCore;
@@ -28,10 +29,9 @@ namespace CarRentalAPI.Application.Services
             }
             catch (Exception ex)
             {
-                Dictionary<string, object> metadata = new();
-                metadata.Add("Exception", ex.Message);
+                Dictionary<string, object> metadata = new() { {"Exception", ex.Message } };
 
-                return Error.Failure(code: "CarService.Get.Failure",
+                return Error.Failure(code: "CarService.GetCarsByBrandAsync.Failure",
                     "Error occured while getting cars by brand", metadata);
             }
         }
@@ -46,10 +46,9 @@ namespace CarRentalAPI.Application.Services
             }
             catch (Exception ex)
             {
-                Dictionary<string, object> metadata = new();
-                metadata.Add("Exception", ex.Message);
+                Dictionary<string, object> metadata = new() { {"Exception", ex.Message } };
 
-                return Error.Failure(code: "CarService.Get.Failure",
+                return Error.Failure(code: "CarService.GetCarsByClassAsync.Failure",
                     "Error occured while getting cars by class", metadata);
             }
         }
@@ -58,9 +57,8 @@ namespace CarRentalAPI.Application.Services
         {
             try
             {
-                // потом таким же запросом чистить старые записи
                 var busyCarsGuids = _context.CarOrders.
-                    Where(order => order.EndOfLease > DateTime.UtcNow)
+                    Where(order => order.EndOfLease <= DateTime.UtcNow)
                     .Select(order => order.Car.Id).ToHashSet();
                 
                 var freeForBookingCars = await _context.Cars.Where(car => !busyCarsGuids.Contains(car.Id)).ToListAsync();
@@ -69,10 +67,9 @@ namespace CarRentalAPI.Application.Services
             }
             catch(Exception ex)
             {
-                Dictionary<string, object> metadata = new();
-                metadata.Add("Exception", ex.Message);
+                Dictionary<string, object> metadata = new() { {"Exception", ex.Message } };
 
-                return Error.Failure(code: "CarService.GetFreeCars.Failure",
+                return Error.Failure(code: "CarService.GetAllAvailableCarsAsync.Failure",
                     "Error occured while getting free cars", metadata);
             }
         }
@@ -89,11 +86,48 @@ namespace CarRentalAPI.Application.Services
             }
             catch (Exception ex)
             {
-                Dictionary<string, object> metadata = new();
-                metadata.Add("Exception", ex.Message);
+                Dictionary<string, object> metadata = new() { {"Exception", ex.Message } };
 
-                return Error.Failure(code: "CarService.Get.Failure",
+                return Error.Failure(code: "CarService.GetAllCarsAsync.Failure",
                     "Error occured while getting all cars", metadata);
+            }
+        }
+
+        public async Task<ErrorOr<GetCarsResponse>> GetCars(PaginationsParamsRequest paginationParams)
+        {
+            try
+            {
+                var query = _context.Cars.AsQueryable();
+
+                if (paginationParams.SortOrder.ToLower() == SortOrdersPagination.Descending)
+                {
+                    query = query.OrderByDescending(e => EF.Property<object>(e, paginationParams.SortBy));
+                }
+
+                if (paginationParams.SortOrder.ToLower() == SortOrdersPagination.Ascending)
+                {
+                    query = query.OrderBy(e => EF.Property<object>(e, paginationParams.SortBy));
+                }
+
+                var totalItems = await query.CountAsync();
+
+                var items = await query.Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize).
+                    Take(paginationParams.PageSize).ToListAsync();
+
+                return new GetCarsResponse
+                (
+                    totalItems, 
+                    paginationParams.PageNumber, 
+                    paginationParams.PageSize,
+                    items
+                );
+            }
+            catch(Exception ex)
+            {
+                Dictionary<string, object> metadata = new() { { "Exception", ex.Message } };
+
+                return Error.Failure(code: "CarService.GetCars.Failure",
+                    "Error occured while getting paginated cars", metadata);
             }
         }
     }
