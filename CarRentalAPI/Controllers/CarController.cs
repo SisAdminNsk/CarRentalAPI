@@ -37,7 +37,7 @@ namespace CarRentalAPI.Controllers
             return Ok(errorOrAllCars.Value);
         }
 
-        [AllowAnonymous]
+        [Authorize(Policy = "user")]
         [HttpGet("GetCars")]
         public async Task<ActionResult> GetCars([FromQuery] PaginationsParamsRequest paginationsParams)
         {

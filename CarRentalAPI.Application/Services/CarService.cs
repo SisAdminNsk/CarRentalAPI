@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+
 using CarRentalAPI.Application.Interfaces;
 using CarRentalAPI.Contracts;
 using CarRentalAPI.Core;
+
 using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,8 +30,8 @@ namespace CarRentalAPI.Application.Services
                 return _mapper.Map<List<Car>>(groupedByBrandCars); 
             }
             catch (Exception ex)
-            {
-                Dictionary<string, object> metadata = new() { {"Exception", ex.Message } };
+            { 
+                Dictionary<string, object> metadata = new() { { "Exception", ex.Message } };
 
                 return Error.Failure(code: "CarService.GetCarsByBrandAsync.Failure",
                     "Error occured while getting cars by brand", metadata);
@@ -46,7 +48,7 @@ namespace CarRentalAPI.Application.Services
             }
             catch (Exception ex)
             {
-                Dictionary<string, object> metadata = new() { {"Exception", ex.Message } };
+                Dictionary<string, object> metadata = new() { { "Exception", ex.Message } };
 
                 return Error.Failure(code: "CarService.GetCarsByClassAsync.Failure",
                     "Error occured while getting cars by class", metadata);
@@ -67,7 +69,7 @@ namespace CarRentalAPI.Application.Services
             }
             catch(Exception ex)
             {
-                Dictionary<string, object> metadata = new() { {"Exception", ex.Message } };
+                Dictionary<string, object> metadata = new() { { "Exception", ex.Message } };
 
                 return Error.Failure(code: "CarService.GetAllAvailableCarsAsync.Failure",
                     "Error occured while getting free cars", metadata);
@@ -86,7 +88,7 @@ namespace CarRentalAPI.Application.Services
             }
             catch (Exception ex)
             {
-                Dictionary<string, object> metadata = new() { {"Exception", ex.Message } };
+                Dictionary<string, object> metadata = new() { { "Exception", ex.Message } };
 
                 return Error.Failure(code: "CarService.GetAllCarsAsync.Failure",
                     "Error occured while getting all cars", metadata);

@@ -88,11 +88,11 @@ namespace CarRentalAPI.Application.Services
                         $"CarsharingUser with GUID: {carOrderRequest.CarsharingUserId} was not found " +
                         $"in database.");
                 }
-
+                // заменить startOfLease и endOfLease параметром LeaseDateTime
                 var carOrder = new CarOrder
                 (
-                    carOrderRequest.StartOfLease,
-                    carOrderRequest.EndOfLease,
+                    carOrderRequest.LeaseDateTime.StartOfLease,
+                    carOrderRequest.LeaseDateTime.EndOfLease,
                     carsharingUser,
                     car, 
                     carOrderRequest.Comment,
