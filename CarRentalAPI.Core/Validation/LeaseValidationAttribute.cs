@@ -52,19 +52,18 @@ namespace CarRentalAPI.Core.Validation
 
         static private LeaseValidationStatus isLeaseDateTimeValid(LeaseDateTime leaseDateTime)
         {
-            if(DateTime.UtcNow < leaseDateTime.StartOfLease)
+            if(leaseDateTime.StartOfLease > leaseDateTime.EndOfLease)
             {
-                if(leaseDateTime.StartOfLease > leaseDateTime.EndOfLease)
-                {
-                    return LeaseValidationStatus.StartOfLeaseLaterThanEndOfLease;
-                }
+                return LeaseValidationStatus.StartOfLeaseLaterThanEndOfLease;
+            }
 
-                if(leaseDateTime.StartOfLease.AddHours(_minimalLeaseTimeInHours) <= leaseDateTime.EndOfLease)
+
+            if(DateTime.UtcNow.Date <= leaseDateTime.StartOfLease.Date)
+            {
+                if(DateTime.UtcNow.Hour <= leaseDateTime.StartOfLease.Hour) 
                 {
                     return LeaseValidationStatus.Ok;
                 }
-
-                return LeaseValidationStatus.MinimalOrderTimeError;
             }
 
             return LeaseValidationStatus.LessThanServerTime;

@@ -17,6 +17,17 @@ namespace CarRentalAPI.Controllers
             _carBookingService = carBookingService;
         }
 
+        [Authorize(Policy = "user")]
+        [HttpGet("GetServerDateTime")]
+        public async Task<ActionResult> GetServerDateTime([FromQuery] int hoursOffset)
+        {
+            var local = DateTime.UtcNow.AddHours(hoursOffset);
+            var userLocalTime = DateTime.UtcNow.AddHours(hoursOffset).ToString();
+
+            return Ok(userLocalTime);
+        }
+
+
         [AllowAnonymous]
         [HttpPost("CreateCarOrder")]
         public async Task<ActionResult> CreateCarOrder(CarOrderRequest request)
