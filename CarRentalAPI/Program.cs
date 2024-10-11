@@ -3,9 +3,14 @@ using CarRentalAPI.Application.Extentions;
 using CarRentalAPI.Application.Mapping;
 using CarRentalAPI.BackgroundServices;
 using CarRentalAPI.Infrastructure;
+using System.Net.Sockets;
+using System.Net;
 
 namespace CarRentalAPI
 {
+
+
+
     public class Program
     {
         public static void Main(string[] args)
@@ -44,10 +49,32 @@ namespace CarRentalAPI
             app.UseCors("AllowAllOrigins");
             app.UseHttpsRedirection();
             app.UseSession();
-
             app.MapControllers();
+
+            string LocalIp = LocalIPAddress();
+            app.Urls.Add("http://" + LocalIp + ":5072");
+
+            var hamachiAddress = "25.10.158.229";
+            app.Urls.Add("http://" + hamachiAddress + ":80");
 
             app.Run();
         }
+        static string LocalIPAddress()
+        {
+            using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
+            {
+                socket.Connect("8.8.8.8", 65530);
+                IPEndPoint? endPoint = socket.LocalEndPoint as IPEndPoint;
+                if (endPoint != null)
+                {
+                    return endPoint.Address.ToString();
+                }
+                else
+                {
+                    return "127.0.0.1";
+                }
+            }
+        }
+
     }
 }

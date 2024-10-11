@@ -29,10 +29,10 @@ namespace CarRentalAPI.Controllers
 
 
         [AllowAnonymous]
-        [HttpPost("CreateCarOrder")]
-        public async Task<ActionResult> CreateCarOrder(CarOrderRequest request)
+        [HttpPost("CreateOrUpdateCarOrder")]
+        public async Task<ActionResult> CreateOrUpdateCarOrder(CarOrderRequest request)
         {
-            var errorOrOrder = await _carBookingService.CreateCarOrderAsync(request);
+            var errorOrOrder = await _carBookingService.CreateOrUpdateCarOrderAsync(request);
 
             if (errorOrOrder.IsError)
             {

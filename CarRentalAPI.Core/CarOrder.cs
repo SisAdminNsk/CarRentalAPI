@@ -32,6 +32,8 @@ namespace CarRentalAPI.Core
             decimal price, 
             string status)
         {
+            Id = Guid.NewGuid();
+
             Comment = comment;
             StartOfLease = startOfLease;
             EndOfLease = endOfLease;

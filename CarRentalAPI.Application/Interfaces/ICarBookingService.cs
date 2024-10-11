@@ -1,11 +1,12 @@
 ﻿using CarRentalAPI.Contracts;
+using CarRentalAPI.Core;
 using ErrorOr;
 
 namespace CarRentalAPI.Application.Interfaces
 {
     public interface ICarBookingService
     {
-        Task<ErrorOr<CarOrderRequest>> CreateCarOrderAsync(CarOrderRequest carOrderRequest);
+        Task<ErrorOr<CarOrderRequest>> CreateOrUpdateCarOrderAsync(CarOrderRequest carOrderRequest);
         Task<ErrorOr<Deleted>> DeleteCarOrderAsync(Guid carOrderId);
         Task<ErrorOr<OpenCarReservationRequest>> OpenCarReservationAsync(OpenCarReservationRequest openCarReservationRequest);
         Task<ErrorOr<CloseCarReservationRequest>> CloseCarReservationAsync(CloseCarReservationRequest closeCarOrderRequest);

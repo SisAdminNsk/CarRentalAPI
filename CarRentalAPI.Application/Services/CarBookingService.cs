@@ -68,7 +68,7 @@ namespace CarRentalAPI.Application.Services
             }
         }
 
-        public async Task<ErrorOr<CarOrderRequest>> CreateCarOrderAsync(CarOrderRequest carOrderRequest)
+        public async Task<ErrorOr<CarOrderRequest>> CreateOrUpdateCarOrderAsync(CarOrderRequest carOrderRequest)
         {
             try
             {
@@ -88,7 +88,7 @@ namespace CarRentalAPI.Application.Services
                         $"CarsharingUser with GUID: {carOrderRequest.CarsharingUserId} was not found " +
                         $"in database.");
                 }
-                // заменить startOfLease и endOfLease параметром LeaseDateTime
+
                 var carOrder = new CarOrder
                 (
                     carOrderRequest.LeaseDateTime.StartOfLease,
@@ -100,11 +100,27 @@ namespace CarRentalAPI.Application.Services
                     CarOrdersStatus.NotConsidered
                 );
 
-                await _context.CarOrders.AddAsync(carOrder);
-                await _context.SaveChangesAsync();
+                var isCarsharingUserAlreadyHasCarOrder = await IsCarsharingUserAlreadyHasCarOrder(carsharingUser.Id, car.Id);
 
-                return carOrderRequest;
+                if (!isCarsharingUserAlreadyHasCarOrder.IsError) 
+                {
+                    if (isCarsharingUserAlreadyHasCarOrder.Value is not null)
+                    {
+                        var existingCarOrder = isCarsharingUserAlreadyHasCarOrder.Value;
 
+                        await UpdateCarOrderDetails(existingCarOrder, carOrder);
+                    }
+                    else
+                    {
+                        await AddNewCarOrder(carOrder);
+                    }
+
+                    return carOrderRequest;
+                }
+
+                return isCarsharingUserAlreadyHasCarOrder.FirstError;
+
+                
             }
             catch(Exception ex)
             {
@@ -112,6 +128,43 @@ namespace CarRentalAPI.Application.Services
             }
         }
 
+        private async Task UpdateCarOrderDetails(CarOrder existingcarOrder, CarOrder newCarOrderDetails)
+        {
+            existingcarOrder.Price = newCarOrderDetails.Price;
+            existingcarOrder.Comment = newCarOrderDetails.Comment;
+            existingcarOrder.StartOfLease = newCarOrderDetails.StartOfLease;
+            existingcarOrder.EndOfLease = newCarOrderDetails.EndOfLease;
+
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task AddNewCarOrder(CarOrder newCarOrder)
+        {
+            await _context.CarOrders.AddAsync(newCarOrder);
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task<ErrorOr<CarOrder?>> IsCarsharingUserAlreadyHasCarOrder(Guid carsharingUserId, Guid carId)
+        {
+            try
+            {
+                var carOrder = await _context.CarOrders.
+                    Where
+                    (
+                        co => co.CarsharingUserId == carsharingUserId 
+                        && co.CarId == carId 
+                        && co.Status == CarOrdersStatus.NotConsidered
+                    )
+                    .FirstOrDefaultAsync();
+
+                return carOrder;
+            }
+            catch (Exception ex)
+            {
+                return Error.Failure("CarBookingService.IsCarsharingUserAlreadyHasCarOrder.Failure",
+                    description: ex.Message);
+            }
+        }
         public async Task<ErrorOr<Deleted>> DeleteCarOrderAsync(Guid carOrderId)
         {
             try
