@@ -72,7 +72,6 @@ namespace CarRentalAPI.Application.Services
             try
             {
                 var carsharingUser = await _context.CarsharingUsers.
-                    AsNoTracking().
                     Where(cu => cu.UserId == userId).
                     Include(cu => cu.User).
                     AsNoTracking().

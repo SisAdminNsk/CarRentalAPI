@@ -70,30 +70,14 @@ namespace CarRentalAPI.Application.Services
         }
         public async Task<ErrorOr<Success>> IsUserNotExistsWithData(UserRegistrateRequest data)
         {
-
-            var errors = new List<Error>();
-
             try
             {
-                if (await IsUserAlreadyExistsWithEmail(data.Email))
+                if(await IsAlreadyExistsWithProfileData(data.Email, data.Username))
                 {
                     Dictionary<string, object> metadata = new() { { "StatusCode", 409 } };
 
-                    errors.Add(Error.Conflict("UserService.Registrate.Conflict.Email",
-                        $"User with login: {data.Email} already exists.", metadata));
-                }
-
-                if (await IsUserAlreadyExistsWithName(data.Username))
-                {
-                    Dictionary<string, object> metadata = new() { { "StatusCode", 409 } };
-
-                    errors.Add(Error.Conflict("UserService.Registrate.Conflict.Username",
-                        $"User with name: {data.Username} already exists.", metadata));
-                }
-
-                if (errors.Count != 0)
-                {
-                    return errors;
+                    return Error.Conflict("UserService.Registrate.Conflict",
+                        $"User with login: {data.Email} or with name {data.Username} already exists.", metadata);
                 }
 
                 return Result.Success;
@@ -106,21 +90,9 @@ namespace CarRentalAPI.Application.Services
                     "Error occured while registration new user", metadata);
             }
         }
-        private async Task<bool> IsUserAlreadyExistsWithEmail(string userEmail)
+        private async Task<bool> IsAlreadyExistsWithProfileData(string userEmail, string username)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
-
-            if(user is not null)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        private async Task<bool> IsUserAlreadyExistsWithName(string userName)
-        {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Name == userName);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userEmail || u.Name == username);
 
             if (user is not null)
             {
@@ -128,11 +100,11 @@ namespace CarRentalAPI.Application.Services
             }
 
             return false;
-
         }
+
         private async Task<User> CreateUserAsync(UserRegistrateRequest user)
         {
-            var roles = await _context.UsersRoles.ToListAsync();
+            var roles = await _context.UsersRoles.AsNoTracking().ToListAsync();
 
             var standartUserRole = roles.Where(r => r.Name == "user").ToList();
 

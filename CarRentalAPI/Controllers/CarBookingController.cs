@@ -30,7 +30,7 @@ namespace CarRentalAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("CreateOrUpdateCarOrder")]
-        public async Task<ActionResult> CreateOrUpdateCarOrder(CarOrderRequest request)
+        public async Task<ActionResult> CreateOrUpdateCarOrder([FromBody] CarOrderRequest request)
         {
             var errorOrOrder = await _carBookingService.CreateOrUpdateCarOrderAsync(request);
 
@@ -44,7 +44,7 @@ namespace CarRentalAPI.Controllers
 
         [AllowAnonymous] // доступно пользователеям только с ролью Admin
         [HttpPost(("OpenCarReservation"))]
-        public async Task<ActionResult> OpenCarReservation(OpenCarReservationRequest openCarReservationRequest)
+        public async Task<ActionResult> OpenCarReservation([FromBody] OpenCarReservationRequest openCarReservationRequest)
         {
             var errorOrOpenedCarReservation = await _carBookingService.OpenCarReservationAsync(openCarReservationRequest);
 
@@ -58,7 +58,7 @@ namespace CarRentalAPI.Controllers
 
         [AllowAnonymous]  // доступно пользователеям только с ролью Admin
         [HttpPost("CloseCarReservation")]
-        public async Task<ActionResult> CloseCarReservation(CloseCarReservationRequest closeCarReservationRequest)
+        public async Task<ActionResult> CloseCarReservation([FromBody] CloseCarReservationRequest closeCarReservationRequest)
         {
             var errorOrClosedCarReservation = await _carBookingService.CloseCarReservationAsync(closeCarReservationRequest);
 
@@ -72,7 +72,7 @@ namespace CarRentalAPI.Controllers
 
         [AllowAnonymous]
         [HttpDelete("DeleteCarOrder")]  // доступно пользователеям только с ролью Admin
-        public async Task<ActionResult> DeleteCarOrder(Guid orderId)
+        public async Task<ActionResult> DeleteCarOrder([FromQuery] Guid orderId)
         {
             var errorOrDeleted = await _carBookingService.DeleteCarOrderAsync(orderId);
 
@@ -86,7 +86,7 @@ namespace CarRentalAPI.Controllers
 
         [AllowAnonymous]
         [HttpGet("GetCarOrdersByCarsharingUserId")]
-        public async Task<ActionResult> GetCarOrdersByCarsharingUserId(Guid carsharingUserId)
+        public async Task<ActionResult> GetCarOrdersByCarsharingUserId([FromQuery] Guid carsharingUserId)
         {
             var errorOrCarOrders = await _carBookingService.GetCarOrdersByCarsharingUserIdAsync(carsharingUserId);
 
@@ -142,7 +142,7 @@ namespace CarRentalAPI.Controllers
 
         [AllowAnonymous]
         [HttpGet("GetOpenedCarReservationsByCarsharingUserIdAsync")]
-        public async Task<ActionResult> GetOpenedCarReservationsByCarsharingUserIdAsync(Guid carsharingUserId)
+        public async Task<ActionResult> GetOpenedCarReservationsByCarsharingUserIdAsync([FromQuery] Guid carsharingUserId)
         {
             var errorOrOpenedCarReservations = await _carBookingService.GetOpenedCarOrdersByCarsharingUserIdAsync(carsharingUserId);
 
@@ -170,7 +170,7 @@ namespace CarRentalAPI.Controllers
 
         [AllowAnonymous]
         [HttpGet("GetClosedCarReservationsByCarsharingUserId")]
-        public async Task<ActionResult> GetClosedCarReservationsByCarsharingUserId(Guid carsharingUserId)
+        public async Task<ActionResult> GetClosedCarReservationsByCarsharingUserId([FromQuery] Guid carsharingUserId)
         {
             var errorOrClosedCarReservations = await _carBookingService.GetClosedCarOrdersByCarsharingUserIdAsync(carsharingUserId);
 
@@ -184,7 +184,7 @@ namespace CarRentalAPI.Controllers
 
         [AllowAnonymous]
         [HttpGet("IsCarFreeForBooking")]
-        public async Task<ActionResult> IsCarFreeForBooking(Guid carId)
+        public async Task<ActionResult> IsCarFreeForBooking([FromQuery] Guid carId)
         {
             var errorOrCarStatusResponse = await _carBookingService.IsCarFreeForBooking(carId);
 

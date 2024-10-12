@@ -8,9 +8,6 @@ using System.Net;
 
 namespace CarRentalAPI
 {
-
-
-
     public class Program
     {
         public static void Main(string[] args)
@@ -37,6 +34,9 @@ namespace CarRentalAPI
             builder.Services.AddSwaggerGen();
             builder.Services.AddAutoMapper(typeof(CarOrderProfile));
 
+            string LocalIp = LocalIPAddress();
+            builder.WebHost.UseUrls("http://localhost:80", "http://" + LocalIp + ":5072");
+                
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -46,16 +46,18 @@ namespace CarRentalAPI
                 app.UseSwaggerUI();
             }
 
+            
+
             app.UseCors("AllowAllOrigins");
             app.UseHttpsRedirection();
             app.UseSession();
             app.MapControllers();
 
-            string LocalIp = LocalIPAddress();
-            app.Urls.Add("http://" + LocalIp + ":5072");
+            
+            //app.Urls.Add("http://" + LocalIp + ":5072");
 
-            var hamachiAddress = "25.10.158.229";
-            app.Urls.Add("http://" + hamachiAddress + ":80");
+            //var hamachiAddress = "25.10.158.229";
+            //app.Urls.Add("http://" + hamachiAddress + ":80");
 
             app.Run();
         }

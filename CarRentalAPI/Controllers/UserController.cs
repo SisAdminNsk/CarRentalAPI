@@ -45,11 +45,11 @@ namespace CarRentalAPI.Controllers
 
             if (!isUserAlreadyExists.IsError)
             {
-                var errorOrVerificationCode = await _userService.SendEmailVerificationCodeAsync(request.Email, cancellationToken);
+                var errorOrSuccess = await _userService.SendEmailVerificationCodeAsync(request.Email, cancellationToken);
 
-                if (errorOrVerificationCode.IsError)
+                if (errorOrSuccess.IsError)
                 {
-                    return BadRequest(errorOrVerificationCode.Errors);
+                    return BadRequest(errorOrSuccess.Errors);
                 }
 
                 return Ok(new EmailMessageResponse(200, $"Код подтверждения регистрации отправлен по адресу: {request.Email}"));

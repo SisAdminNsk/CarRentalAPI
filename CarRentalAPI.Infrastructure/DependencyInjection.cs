@@ -7,7 +7,6 @@ using CarRentalAPI.Infrastructure.Security;
 using CarRentalAPI.Infrastructure.Validation;
 using Microsoft.Extensions.DependencyInjection;
 
-
 namespace CarRentalAPI.Infrastructure
 {
     public static class DependencyInjection

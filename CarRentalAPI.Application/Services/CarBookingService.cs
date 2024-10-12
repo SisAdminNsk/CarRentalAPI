@@ -74,15 +74,15 @@ namespace CarRentalAPI.Application.Services
             {
                 var car = await _context.Cars.FindAsync(carOrderRequest.CarId);
 
-                if(car is null)
+                var carsharingUser = await _context.CarsharingUsers.
+                    Where(u => u.Id == carOrderRequest.CarsharingUserId).FirstOrDefaultAsync();
+
+                if (car is null)
                 {
                     return Error.NotFound("Car.NotFound", $"Car with GUID: {carOrderRequest.CarId} was not found in database.");
                 }
 
-                var carsharingUser = await _context.CarsharingUsers.
-                    Where(u => u.Id == carOrderRequest.CarsharingUserId).FirstOrDefaultAsync();
-
-                if(carsharingUser is null)
+                if (carsharingUser is null)
                 {
                     return Error.NotFound("CarsharingUser.NotFound",
                         $"CarsharingUser with GUID: {carOrderRequest.CarsharingUserId} was not found " +
@@ -118,9 +118,7 @@ namespace CarRentalAPI.Application.Services
                     return carOrderRequest;
                 }
 
-                return isCarsharingUserAlreadyHasCarOrder.FirstError;
-
-                
+                return isCarsharingUserAlreadyHasCarOrder.FirstError;               
             }
             catch(Exception ex)
             {
@@ -193,7 +191,6 @@ namespace CarRentalAPI.Application.Services
             try
             {
                 var carOrders = await _context.CarOrders.
-                    AsNoTracking().
                     Include(co => co.CarsharingUser).
                     AsNoTracking().
                     ToListAsync();
@@ -213,7 +210,6 @@ namespace CarRentalAPI.Application.Services
                 var closedStatus = new HashSet<string>() { CarOrdersStatus.OutOfTime, CarOrdersStatus.Closed };
 
                 var closedCarOrders = await _context.CarOrders.
-                    AsNoTracking().
                     Where(co => closedStatus.Contains(co.Status)).
                     AsNoTracking().
                     ToListAsync();
@@ -231,9 +227,7 @@ namespace CarRentalAPI.Application.Services
             try
             {
                 var openedCarOrders = await _context.CarOrders.
-                    AsNoTracking().
                     Where(co => co.Status == CarOrdersStatus.Opened).
-                    AsNoTracking().
                     Include(co => co.Car).
                     AsNoTracking().
                     ToListAsync();
@@ -251,9 +245,7 @@ namespace CarRentalAPI.Application.Services
             try
             {
                 var carOrders = await _context.CarOrders.
-                    AsNoTracking().
                     Include(co => co.CarsharingUser).
-                    AsNoTracking().
                     Where(co => co.CarsharingUserId == carsharingUserId)
                     .AsNoTracking()
                     .ToListAsync();
@@ -273,9 +265,7 @@ namespace CarRentalAPI.Application.Services
                 var closedStatus = new HashSet<string>() { CarOrdersStatus.OutOfTime, CarOrdersStatus.Closed };
 
                 var closedCarOrders = await _context.CarOrders.
-                    AsNoTracking().
                     Where(co => co.CarsharingUserId == carsharingUserId).
-                    AsNoTracking().
                     Where(co => closedStatus.Contains(co.Status)).
                     AsNoTracking().
                     ToListAsync();
@@ -322,7 +312,6 @@ namespace CarRentalAPI.Application.Services
                 carOrder.StartOfLease = openCarReservationRequest.StartOfLease;
                 carOrder.EndOfLease = openCarReservationRequest.EndOfLease;
                 carOrder.Price = openCarReservationRequest.Price;
-
                 carOrder.Status = CarOrdersStatus.Opened;
 
                 await _context.SaveChangesAsync();
@@ -339,11 +328,8 @@ namespace CarRentalAPI.Application.Services
             try
             {
                 var openedCarOrders = await _context.CarOrders.
-                    AsNoTracking().
-                    Where(co => co.CarsharingUserId == carsharingUserId).
-                    AsNoTracking()
+                    Where(co => co.CarsharingUserId == carsharingUserId)
                     .Where(co => co.Status == CarOrdersStatus.Opened).
-                    AsNoTracking().
                     Include(co => co.Car).
                     AsNoTracking().
                     ToListAsync();
@@ -361,9 +347,7 @@ namespace CarRentalAPI.Application.Services
             try
             {
                 var notConsideredCarOrders = await _context.CarOrders.
-                    AsNoTracking().
                     Where(co => co.Status == CarOrdersStatus.NotConsidered).
-                    AsNoTracking().
                     Include(co => co.CarsharingUser).
                     AsNoTracking().
                     ToListAsync();
@@ -381,9 +365,7 @@ namespace CarRentalAPI.Application.Services
             try
             {
                 var isCarBusyNow = await _context.CarOrders.
-                    AsNoTracking().
                     Where(co => co.CarId == carId).
-                    AsNoTracking().
                     Where(co => co.Status == CarOrdersStatus.Opened).
                     AsNoTracking().
                     FirstOrDefaultAsync();
