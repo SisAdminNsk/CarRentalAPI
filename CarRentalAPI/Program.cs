@@ -55,7 +55,7 @@ namespace CarRentalAPI
 
             
             //app.Urls.Add("http://" + LocalIp + ":5072");
-
+            // пробный коммит
             //var hamachiAddress = "25.10.158.229";
             //app.Urls.Add("http://" + hamachiAddress + ":80");
 
