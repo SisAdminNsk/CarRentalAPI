@@ -30,7 +30,8 @@ namespace CarRentalAPI.Core.Validation
                 switch(leaseValidationResult)
                 {
                     case LeaseValidationStatus.LessThanServerTime:
-                        return new ValidationResult($"Server time is: {DateTime.UtcNow}. With server time conflict");
+                        return new ValidationResult($"Server time is: {DateTime.UtcNow} but startOfLease is: " +
+                            $"{leaseDateTime.StartOfLease}. With server time conflict");
 
                     case LeaseValidationStatus.MinimalOrderTimeError:
                         return new ValidationResult($"Minimal order time value is: {_minimalLeaseTimeInHours} hour. " +

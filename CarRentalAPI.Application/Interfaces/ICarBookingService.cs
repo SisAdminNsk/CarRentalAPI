@@ -6,7 +6,7 @@ namespace CarRentalAPI.Application.Interfaces
 {
     public interface ICarBookingService
     {
-        Task<ErrorOr<CarOrderRequest>> CreateOrUpdateCarOrderAsync(CarOrderRequest carOrderRequest);
+        Task<ErrorOr<CarOrderReply>> CreateOrUpdateCarOrderAsync(CarOrderRequest carOrderRequest);
         Task<ErrorOr<Deleted>> DeleteCarOrderAsync(Guid carOrderId);
         Task<ErrorOr<OpenCarReservationRequest>> OpenCarReservationAsync(OpenCarReservationRequest openCarReservationRequest);
         Task<ErrorOr<CloseCarReservationRequest>> CloseCarReservationAsync(CloseCarReservationRequest closeCarOrderRequest);

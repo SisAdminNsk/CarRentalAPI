@@ -12,7 +12,7 @@ namespace CarRentalAPI.Core
         public Guid CarsharingUserId { get; set; }
         public Car Car { get; set; }
         public Guid CarId { get; set; }
-        [MaxLength(100)]
+        [MaxLength(350)]
         public string Comment { get; set; }
         public decimal Price { get; set; }
         [Required]

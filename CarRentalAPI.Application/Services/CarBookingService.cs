@@ -4,6 +4,7 @@ using CarRentalAPI.Contracts;
 using CarRentalAPI.Core;
 using ErrorOr;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 
 namespace CarRentalAPI.Application.Services
@@ -68,14 +69,15 @@ namespace CarRentalAPI.Application.Services
             }
         }
 
-        public async Task<ErrorOr<CarOrderRequest>> CreateOrUpdateCarOrderAsync(CarOrderRequest carOrderRequest)
+        public async Task<ErrorOr<CarOrderReply>> CreateOrUpdateCarOrderAsync(CarOrderRequest carOrderRequest)
         {
             try
             {
                 var car = await _context.Cars.FindAsync(carOrderRequest.CarId);
 
                 var carsharingUser = await _context.CarsharingUsers.
-                    Where(u => u.Id == carOrderRequest.CarsharingUserId).FirstOrDefaultAsync();
+                    Where(u => u.Id == carOrderRequest.CarsharingUserId).
+                    FirstOrDefaultAsync();
 
                 if (car is null)
                 {
@@ -109,13 +111,13 @@ namespace CarRentalAPI.Application.Services
                         var existingCarOrder = isCarsharingUserAlreadyHasCarOrder.Value;
 
                         await UpdateCarOrderDetails(existingCarOrder, carOrder);
-                    }
-                    else
-                    {
-                        await AddNewCarOrder(carOrder);
+
+                        return new CarOrderReply(carOrderRequest, 204, "Updated");
                     }
 
-                    return carOrderRequest;
+                    await AddNewCarOrder(carOrder);
+
+                    return new CarOrderReply(carOrderRequest, 200, "Created");
                 }
 
                 return isCarsharingUserAlreadyHasCarOrder.FirstError;               
