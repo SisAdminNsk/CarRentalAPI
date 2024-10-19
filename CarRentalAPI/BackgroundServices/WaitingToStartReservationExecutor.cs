@@ -2,12 +2,12 @@
 
 namespace CarRentalAPI.BackgroundServices
 {
-    public class OutdatedReservationsCleaner : BackgroundService
+    public class WaitingToStartReservationExecutor : BackgroundService 
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly int _taskCompletionDelayInMinutes = 1;
 
-        public OutdatedReservationsCleaner(IServiceProvider serviceProvider)
+        public WaitingToStartReservationExecutor(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }
@@ -20,11 +20,11 @@ namespace CarRentalAPI.BackgroundServices
                 {
                     var carBookingService = scope.ServiceProvider.GetRequiredService<ICarBookingService>();
 
-                    await carBookingService.CloseAllOutdatedOpenedCarReservatiosAsync();
+                    await carBookingService.OpenAllWaitingToStartCarReservationsAsync();
                 }
 
                 await Task.Delay(TimeSpan.FromMinutes(_taskCompletionDelayInMinutes), stoppingToken);
-            }            
+            }
         }
     }
 

@@ -28,6 +28,7 @@ namespace CarRentalAPI
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession();
             builder.Services.AddHostedService<OutdatedReservationsCleaner>();
+            builder.Services.AddHostedService<WaitingToStartReservationExecutor>();
             //builder.Services.AddSession();
 
             builder.Services.AddWeightControl();

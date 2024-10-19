@@ -59,12 +59,9 @@ namespace CarRentalAPI.Core.Validation
             }
 
 
-            if(DateTime.UtcNow.Date <= leaseDateTime.StartOfLease.Date)
+            if(DateTime.UtcNow <= leaseDateTime.StartOfLease)
             {
-                if(DateTime.UtcNow.Hour <= leaseDateTime.StartOfLease.Hour) 
-                {
-                    return LeaseValidationStatus.Ok;
-                }
+                return LeaseValidationStatus.Ok;
             }
 
             return LeaseValidationStatus.LessThanServerTime;

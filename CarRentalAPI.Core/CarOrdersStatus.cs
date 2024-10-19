@@ -5,10 +5,11 @@
         public static string OutOfTime { get; private set; } = "OutOfTime";
         public static string Closed { get; private set; } = "Closed";
         public static string Opened { get; private set; } = "Opened";
+        public static string WaitingToStart { get; private set; } = "WaitingToStart";
         public static string NotConsidered { get; private set; } = "NotConsidered";
 
         private static HashSet<string> AvailableStatus = new HashSet<string>() 
-        { OutOfTime, Closed, Opened, NotConsidered };
+        { OutOfTime, Closed, Opened, NotConsidered, WaitingToStart };
 
         public static bool IsStatusAvailable(string status)
         {

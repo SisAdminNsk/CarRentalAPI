@@ -28,7 +28,7 @@ namespace CarRentalAPI.Controllers
         }
 
 
-        [AllowAnonymous]
+        [Authorize(Policy = "user")]
         [HttpPost("CreateOrUpdateCarOrder")]
         public async Task<ActionResult> CreateOrUpdateCarOrder([FromBody] CarOrderRequest request)
         {
@@ -85,10 +85,10 @@ namespace CarRentalAPI.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("GetCarOrdersByCarsharingUserId")]
-        public async Task<ActionResult> GetCarOrdersByCarsharingUserId([FromQuery] Guid carsharingUserId)
+        [HttpGet("GetCarOrdersByUserId")]
+        public async Task<ActionResult> GetCarOrdersByUserId([FromQuery] Guid userId)
         {
-            var errorOrCarOrders = await _carBookingService.GetCarOrdersByCarsharingUserIdAsync(carsharingUserId);
+            var errorOrCarOrders = await _carBookingService.GetCarOrdersByCarsharingUserIdAsync(userId);
 
             if (errorOrCarOrders.IsError)
             {
@@ -141,8 +141,8 @@ namespace CarRentalAPI.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("GetOpenedCarReservationsByCarsharingUserIdAsync")]
-        public async Task<ActionResult> GetOpenedCarReservationsByCarsharingUserIdAsync([FromQuery] Guid carsharingUserId)
+        [HttpGet("GetOpenedCarReservationsByCarsharingUserId")]
+        public async Task<ActionResult> GetOpenedCarReservationsByCarsharingUserId([FromQuery] Guid carsharingUserId)
         {
             var errorOrOpenedCarReservations = await _carBookingService.GetOpenedCarOrdersByCarsharingUserIdAsync(carsharingUserId);
 

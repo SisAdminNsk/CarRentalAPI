@@ -13,6 +13,10 @@ namespace CarRentalAPI.Application.Mapping
                  .ForMember(d => d.CarName, opt => opt.MapFrom(src => src.Car.Brand + "/" +
                  src.Car.Model))
 
+                 .ForMember(d => d.Status, opt => opt.MapFrom(src => src.Status))
+                 .ForMember(d => d.Comment, opt => opt.MapFrom(src => src.Comment))
+                 .ForMember(d => d.StartOfLease, opt => opt.MapFrom(src => src.StartOfLease))
+                 .ForMember(d => d.DeadlineDateTime, opt => opt.MapFrom(src => src.EndOfLease))
                  .ForMember(d => d.CarImageUri, opt => opt.MapFrom(src => src.Car.CarImageURI))
                  .ForMember(d => d.RentalTimeRemainInMinutes, opt => opt.MapFrom(src => CalcRemainTimeInMinutes(src.EndOfLease)));
         }

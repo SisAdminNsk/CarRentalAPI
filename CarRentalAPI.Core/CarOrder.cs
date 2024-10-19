@@ -13,7 +13,7 @@ namespace CarRentalAPI.Core
         public Car Car { get; set; }
         public Guid CarId { get; set; }
         [MaxLength(350)]
-        public string Comment { get; set; }
+        public string? Comment { get; set; }
         public decimal Price { get; set; }
         [Required]
         [CarOrderStatusValidation]

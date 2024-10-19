@@ -4,8 +4,6 @@ using CarRentalAPI.Contracts;
 using CarRentalAPI.Core;
 using ErrorOr;
 using Microsoft.EntityFrameworkCore;
-using System.Net;
-
 
 namespace CarRentalAPI.Application.Services
 {
@@ -311,10 +309,10 @@ namespace CarRentalAPI.Application.Services
                     return Error.Conflict("CarIsBusy.Conflict", $"Car with GUID: {carOrder.CarId} is busy for booking now.");
                 }
 
-                carOrder.StartOfLease = openCarReservationRequest.StartOfLease;
-                carOrder.EndOfLease = openCarReservationRequest.EndOfLease;
+                carOrder.StartOfLease = openCarReservationRequest.LeaseDateTime.StartOfLease;
+                carOrder.EndOfLease = openCarReservationRequest.LeaseDateTime.EndOfLease;
                 carOrder.Price = openCarReservationRequest.Price;
-                carOrder.Status = CarOrdersStatus.Opened;
+                carOrder.Status = CarOrdersStatus.WaitingToStart;
 
                 await _context.SaveChangesAsync();
 
@@ -329,9 +327,13 @@ namespace CarRentalAPI.Application.Services
         {
             try
             {
+                await CloseAllOutdatedOpenedCarReserVationsOfCarhsaringUserAsync(carsharingUserId);
+                await OpenAllWaitingToStartCarReservationsOfCarsharingUserAsync(carsharingUserId);
+
                 var openedCarOrders = await _context.CarOrders.
+                    Include(co => co.CarsharingUser).
                     Where(co => co.CarsharingUserId == carsharingUserId)
-                    .Where(co => co.Status == CarOrdersStatus.Opened).
+                    .Where(co => co.Status == CarOrdersStatus.Opened || co.Status == CarOrdersStatus.WaitingToStart).
                     Include(co => co.Car).
                     AsNoTracking().
                     ToListAsync();
@@ -388,6 +390,73 @@ namespace CarRentalAPI.Application.Services
             {
                 return Error.Failure("CarBookingService.IsCarFreeForBooking.Failure", description: ex.Message);
             }      
+        }
+
+        public async Task<ErrorOr<Success>> OpenAllWaitingToStartCarReservationsAsync()
+        {
+            try
+            {
+                var waitingTostartCarReservations = await _context.CarOrders.
+                   Where(order => order.Status == CarOrdersStatus.WaitingToStart)
+                   .Where(order => order.StartOfLease <= DateTime.UtcNow).
+                   ToListAsync();
+
+                waitingTostartCarReservations.ForEach(order => order.Status = CarOrdersStatus.Opened);
+
+                await _context.SaveChangesAsync();
+
+                return Result.Success;
+            }
+            catch(Exception ex)
+            {
+                return Error.Failure("CarBookingService.OpenAllWaitingToStartCarReservationsAsync.Failure",
+                    description: ex.Message);
+            }
+        }
+        public async Task<ErrorOr<Success>> OpenAllWaitingToStartCarReservationsOfCarsharingUserAsync(Guid carhsaringUserId)
+        {
+            try
+            {
+                var waitingToStartCarReservationsOfCarsharingUser = await _context.CarOrders.
+                    Where(order => order.CarsharingUserId == carhsaringUserId).
+                    Where(order => order.Status == CarOrdersStatus.WaitingToStart).
+                    Where(order => order.StartOfLease <= DateTime.UtcNow).
+                    ToListAsync();
+
+                waitingToStartCarReservationsOfCarsharingUser.ForEach(order => order.Status = CarOrdersStatus.Opened);
+
+                await _context.SaveChangesAsync();
+
+                return Result.Success;
+            }
+            catch(Exception ex)
+            {
+                return Error.Failure("CarBookingService.OpenAllWaitingToStartCarReservationsOfCarsharingUserAsync.Failure",
+                  description: ex.Message);
+            }
+        }
+
+        public async Task<ErrorOr<Success>> CloseAllOutdatedOpenedCarReserVationsOfCarhsaringUserAsync(Guid carsharingUserId)
+        {
+            try
+            {
+                var outdatedOpenedCarOrdersOfCarsharingUser = await _context.CarOrders.
+                   Where(order => order.CarsharingUserId == carsharingUserId).
+                   Where(order => order.Status == CarOrdersStatus.Opened)
+                   .Where(order => order.EndOfLease <= DateTime.UtcNow).
+                   ToListAsync();
+
+                outdatedOpenedCarOrdersOfCarsharingUser.ForEach(order => order.Status = CarOrdersStatus.OutOfTime);
+
+                await _context.SaveChangesAsync();
+
+                return Result.Success;
+            }
+            catch(Exception ex)
+            {
+                return Error.Failure("CarBookingService.CloseAllOutdatedOpenedCarReserVationsOfCarhsaringUserAsync.Failure",
+                 description: ex.Message);
+            }
         }
     }
 }

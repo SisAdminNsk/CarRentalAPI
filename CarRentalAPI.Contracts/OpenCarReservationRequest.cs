@@ -1,20 +1,22 @@
-﻿namespace CarRentalAPI.Contracts
+﻿using CarRentalAPI.Core;
+using CarRentalAPI.Core.Validation;
+
+namespace CarRentalAPI.Contracts
 {
     public class OpenCarReservationRequest
     {
         public Guid CarOrderId { get; set; }
-        public DateTime StartOfLease { get; set; }
-        public DateTime EndOfLease { get; set; }
+
+        [LeaseValidation]
+        public LeaseDateTime LeaseDateTime { get; set; }
         public decimal Price { get; set; }
         public OpenCarReservationRequest(
             Guid carOrderId,
-            DateTime startOfLease,
-            DateTime endOfLease,
+            LeaseDateTime leaseDateTime,
             decimal price) 
         {
             CarOrderId = carOrderId;
-            StartOfLease = startOfLease;
-            EndOfLease = endOfLease;
+            LeaseDateTime = leaseDateTime;
             Price = price;
         }
     }

@@ -11,6 +11,9 @@ namespace CarRentalAPI.Application.Interfaces
         Task<ErrorOr<OpenCarReservationRequest>> OpenCarReservationAsync(OpenCarReservationRequest openCarReservationRequest);
         Task<ErrorOr<CloseCarReservationRequest>> CloseCarReservationAsync(CloseCarReservationRequest closeCarOrderRequest);
         Task<ErrorOr<Success>> CloseAllOutdatedOpenedCarReservatiosAsync();
+        Task<ErrorOr<Success>> CloseAllOutdatedOpenedCarReserVationsOfCarhsaringUserAsync(Guid carsharingUserId);
+        Task<ErrorOr<Success>> OpenAllWaitingToStartCarReservationsAsync();
+        Task<ErrorOr<Success>> OpenAllWaitingToStartCarReservationsOfCarsharingUserAsync(Guid carsharingUserId);
         Task<ErrorOr<List<CarOrderResponse>>> GetAllCarOrdersAsync();
         Task<ErrorOr<List<CarOrderResponse>>> GetAllNotConsideredCarOrders();
         Task<ErrorOr<List<CarOrderResponse>>> GetCarOrdersByCarsharingUserIdAsync(Guid carsharingUserId);
