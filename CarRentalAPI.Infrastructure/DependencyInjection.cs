@@ -23,12 +23,6 @@ namespace CarRentalAPI.Infrastructure
         {
             services.AddDbContext<Context.Context, PostgresContext>();
 
-            services.AddScoped<ICarBookingService, CarBookingService>();
-            services.AddScoped<ICarService, CarService>();
-            services.AddScoped<IGarageManagmentService, GarageManagmentService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<ICarsharingUsersService, CarsharingUsersService>();
-
             return services;
         }
 

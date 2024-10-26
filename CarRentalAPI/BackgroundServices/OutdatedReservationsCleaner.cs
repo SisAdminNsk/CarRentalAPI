@@ -5,7 +5,7 @@ namespace CarRentalAPI.BackgroundServices
     public class OutdatedReservationsCleaner : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly int _taskCompletionDelayInMinutes = 1;
+        private int _minimalTaskCompletionDelayInMinutes = 1;
 
         public OutdatedReservationsCleaner(IServiceProvider serviceProvider)
         {
@@ -23,7 +23,7 @@ namespace CarRentalAPI.BackgroundServices
                     await carBookingService.CloseAllOutdatedOpenedCarReservatiosAsync();
                 }
 
-                await Task.Delay(TimeSpan.FromMinutes(_taskCompletionDelayInMinutes), stoppingToken);
+                await Task.Delay(TimeSpan.FromMinutes(_minimalTaskCompletionDelayInMinutes), stoppingToken);
             }            
         }
     }

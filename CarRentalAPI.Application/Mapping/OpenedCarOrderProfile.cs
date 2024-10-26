@@ -18,14 +18,14 @@ namespace CarRentalAPI.Application.Mapping
                  .ForMember(d => d.StartOfLease, opt => opt.MapFrom(src => src.StartOfLease))
                  .ForMember(d => d.DeadlineDateTime, opt => opt.MapFrom(src => src.EndOfLease))
                  .ForMember(d => d.CarImageUri, opt => opt.MapFrom(src => src.Car.CarImageURI))
-                 .ForMember(d => d.RentalTimeRemainInMinutes, opt => opt.MapFrom(src => CalcRemainTimeInMinutes(src.EndOfLease)));
+                 .ForMember(d => d.RentalTimeRemainInSeconds, opt => opt.MapFrom(src => CalcRemainTimeInSeconds(src.EndOfLease)));
         }
 
-        private int CalcRemainTimeInMinutes(DateTime endOfLease)
+        private int CalcRemainTimeInSeconds(DateTime endOfLease)
         {
             if(endOfLease - DateTime.UtcNow >= TimeSpan.Zero) 
             {
-                return (endOfLease - DateTime.UtcNow).Minutes;
+                return (int)(endOfLease - DateTime.UtcNow).TotalSeconds;
             }
 
             return 0;

@@ -140,7 +140,7 @@ namespace CarRentalAPI.Controllers
             return Ok(errorOrOpenedCarReservations.Value);
         }
 
-        [AllowAnonymous]
+        [Authorize(Policy = "user")]
         [HttpGet("GetOpenedCarReservationsByCarsharingUserId")]
         public async Task<ActionResult> GetOpenedCarReservationsByCarsharingUserId([FromQuery] Guid carsharingUserId)
         {

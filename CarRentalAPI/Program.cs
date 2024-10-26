@@ -31,7 +31,7 @@ namespace CarRentalAPI
             builder.Services.AddHostedService<WaitingToStartReservationExecutor>();
             //builder.Services.AddSession();
 
-            builder.Services.AddWeightControl();
+            builder.Services.AddCarRental();
             builder.Services.AddSwaggerGen();
             builder.Services.AddAutoMapper(typeof(CarOrderProfile));
 

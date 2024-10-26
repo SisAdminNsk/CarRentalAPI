@@ -18,29 +18,6 @@ namespace CarRentalAPI.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<ErrorOr<Success>> CloseAllOutdatedOpenedCarReservatiosAsync()
-        {
-            try
-            {
-                var outdatedOpenedCarOrders = await _context.CarOrders.
-                    Where(order => order.Status == CarOrdersStatus.Opened)
-                    .Where(order => order.EndOfLease <= DateTime.UtcNow).
-                    ToListAsync();
-
-               outdatedOpenedCarOrders.ForEach(order => order.Status = CarOrdersStatus.OutOfTime);
-
-                await _context.SaveChangesAsync();
-
-                return Result.Success;
-
-            }
-            catch(Exception ex)
-            {
-                return Error.Failure("CarBookingService.CloseAllOutdatedOpenedCarReservatiosAsync.Failure",
-                    description: ex.Message);
-            }
-        }
-
         public async Task<ErrorOr<CloseCarReservationRequest>> CloseCarReservationAsync(CloseCarReservationRequest closeCarOrderRequest)
         {
             try
@@ -267,7 +244,9 @@ namespace CarRentalAPI.Application.Services
                 var closedCarOrders = await _context.CarOrders.
                     Where(co => co.CarsharingUserId == carsharingUserId).
                     Where(co => closedStatus.Contains(co.Status)).
+                    Include(co => co.Car).
                     AsNoTracking().
+                    OrderByDescending(co => co.StartOfLease).
                     ToListAsync();
 
                 return _mapper.Map<List<ClosedCarReservationResponse>>(closedCarOrders);
@@ -370,7 +349,7 @@ namespace CarRentalAPI.Application.Services
             {
                 var isCarBusyNow = await _context.CarOrders.
                     Where(co => co.CarId == carId).
-                    Where(co => co.Status == CarOrdersStatus.Opened).
+                    Where(co => co.Status == CarOrdersStatus.Opened || co.Status == CarOrdersStatus.WaitingToStart).
                     AsNoTracking().
                     FirstOrDefaultAsync();
 
@@ -392,7 +371,7 @@ namespace CarRentalAPI.Application.Services
             }      
         }
 
-        public async Task<ErrorOr<Success>> OpenAllWaitingToStartCarReservationsAsync()
+        public async Task<ErrorOr<OpenWaitingToStartReservationsResponse>> OpenAllWaitingToStartCarReservationsAsync()
         {
             try
             {
@@ -405,7 +384,8 @@ namespace CarRentalAPI.Application.Services
 
                 await _context.SaveChangesAsync();
 
-                return Result.Success;
+                return await GetOpenWaitingToStartReservationsResponse();
+
             }
             catch(Exception ex)
             {
@@ -413,7 +393,8 @@ namespace CarRentalAPI.Application.Services
                     description: ex.Message);
             }
         }
-        public async Task<ErrorOr<Success>> OpenAllWaitingToStartCarReservationsOfCarsharingUserAsync(Guid carhsaringUserId)
+
+        public async Task<ErrorOr<OpenWaitingToStartReservationsResponse>> OpenAllWaitingToStartCarReservationsOfCarsharingUserAsync(Guid carhsaringUserId)
         {
             try
             {
@@ -427,7 +408,8 @@ namespace CarRentalAPI.Application.Services
 
                 await _context.SaveChangesAsync();
 
-                return Result.Success;
+                return await GetOpenWaitingToStartReservationsResponse();
+
             }
             catch(Exception ex)
             {
@@ -435,8 +417,57 @@ namespace CarRentalAPI.Application.Services
                   description: ex.Message);
             }
         }
+        private async Task<ErrorOr<OpenWaitingToStartReservationsResponse>> GetOpenWaitingToStartReservationsResponse()
+        {
+            try
+            {
+                var nearestWaitingToStartCarReservation = await _context.CarOrders.
+                    Where(order => order.Status == CarOrdersStatus.WaitingToStart).
+                    OrderBy(order => Math.Abs((order.StartOfLease - DateTime.UtcNow).Ticks)).
+                    AsNoTracking().
+                    FirstOrDefaultAsync();
 
-        public async Task<ErrorOr<Success>> CloseAllOutdatedOpenedCarReserVationsOfCarhsaringUserAsync(Guid carsharingUserId)
+                if (nearestWaitingToStartCarReservation is not null)
+                {
+                    var timeToNextRequestInMinutes = (int)(nearestWaitingToStartCarReservation.StartOfLease - DateTime.UtcNow).TotalMinutes;
+
+                    return new OpenWaitingToStartReservationsResponse(timeToNextRequestInMinutes, nearestWaitingToStartCarReservation.Id);
+                }
+
+                return new OpenWaitingToStartReservationsResponse(0, Guid.Empty, noOneRecord: true);
+            }
+            catch(Exception ex)
+            {
+                return Error.Failure("CarBookingService.GetOpenWaitingToStartReservationsResponse.Failure", description: ex.Message);
+            }   
+        }
+
+        private async Task<ErrorOr<CloseOutdatedReservationsResponse>> GetCloseOutdatedReservationsResponse()
+        {
+            try
+            {
+                var nearestWaitingToCloseCarReservation = await _context.CarOrders.
+                    Where(order => order.Status == CarOrdersStatus.WaitingToStart).
+                    OrderBy(order => Math.Abs((order.EndOfLease - order.StartOfLease).Ticks)).
+                    AsNoTracking().
+                    FirstOrDefaultAsync();
+
+                if (nearestWaitingToCloseCarReservation is not null)
+                {
+                    var timeToNextRequestInMinutes = (int)(nearestWaitingToCloseCarReservation.EndOfLease - nearestWaitingToCloseCarReservation.StartOfLease).TotalMinutes;
+
+                    return new CloseOutdatedReservationsResponse(timeToNextRequestInMinutes, nearestWaitingToCloseCarReservation.Id);
+                }
+
+                return new CloseOutdatedReservationsResponse(0, Guid.Empty, noOneRecord: true);
+            }
+            catch(Exception ex)
+            {
+                return Error.Failure("CarBookingService.GetCloseOutdatedReservationsResponse.Failure", description: ex.Message);
+            }          
+        }
+
+        public async Task<ErrorOr<CloseOutdatedReservationsResponse>> CloseAllOutdatedOpenedCarReserVationsOfCarhsaringUserAsync(Guid carsharingUserId)
         {
             try
             {
@@ -450,12 +481,35 @@ namespace CarRentalAPI.Application.Services
 
                 await _context.SaveChangesAsync();
 
-                return Result.Success;
+                return await GetCloseOutdatedReservationsResponse();
             }
             catch(Exception ex)
             {
                 return Error.Failure("CarBookingService.CloseAllOutdatedOpenedCarReserVationsOfCarhsaringUserAsync.Failure",
                  description: ex.Message);
+            }
+        }
+
+        public async Task<ErrorOr<CloseOutdatedReservationsResponse>> CloseAllOutdatedOpenedCarReservatiosAsync()
+        {
+            try
+            {
+                var outdatedOpenedCarOrders = await _context.CarOrders.
+                    Where(order => order.Status == CarOrdersStatus.Opened)
+                    .Where(order => order.EndOfLease <= DateTime.UtcNow).
+                    ToListAsync();
+
+                outdatedOpenedCarOrders.ForEach(order => order.Status = CarOrdersStatus.OutOfTime);
+
+                await _context.SaveChangesAsync();
+
+                return await GetCloseOutdatedReservationsResponse();
+
+            }
+            catch (Exception ex)
+            {
+                return Error.Failure("CarBookingService.CloseAllOutdatedOpenedCarReservatiosAsync.Failure",
+                    description: ex.Message);
             }
         }
     }

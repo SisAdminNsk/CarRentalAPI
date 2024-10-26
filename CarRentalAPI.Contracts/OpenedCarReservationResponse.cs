@@ -6,7 +6,7 @@
         public Guid CarId { get; set; }
         public string CarName { get; set; }
         public string CarImageUri { get; set; }
-        public int RentalTimeRemainInMinutes { get; set; }
+        public int RentalTimeRemainInSeconds { get; set; }
         public decimal Price { get; set; }
         public DateTime DeadlineDateTime { get; set; }
         public DateTime StartOfLease { get; set; }
@@ -19,7 +19,7 @@
             Guid carId, 
             string carName,
             string carImageUri,
-            int rentalTimeRemainInMinutes,
+            int rentalTimeRemainInSeconds,
             DateTime deadlineDateTime,
             DateTime startOfLease,
             string status,
@@ -29,7 +29,7 @@
             CarId = carId;
             CarName = carName;
             CarImageUri = carImageUri;
-            RentalTimeRemainInMinutes = rentalTimeRemainInMinutes;
+            RentalTimeRemainInSeconds = rentalTimeRemainInSeconds;
             DeadlineDateTime = deadlineDateTime;
             StartOfLease = startOfLease;
             Status = status;

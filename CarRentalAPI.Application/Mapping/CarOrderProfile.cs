@@ -8,7 +8,8 @@ namespace CarRentalAPI.Application.Mapping
     {
         public CarOrderProfile() 
         {
-            CreateMap<CarOrder, CarOrderResponse>().ForMember(d => d.Id, opt => opt.MapFrom(src => src.Id))
+            CreateMap<CarOrder, CarOrderResponse>().
+                ForMember(d => d.Id, opt => opt.MapFrom(src => src.Id))
               .ForMember(d => d.CarId, opt => opt.MapFrom(src => src.CarId))
               .ForMember(d => d.CarsharingUserId, opt => opt.MapFrom(src => src.CarsharingUserId))
              .ForMember(d => d.Price, opt => opt.MapFrom(src => src.Price))

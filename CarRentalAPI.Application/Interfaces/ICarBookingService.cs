@@ -1,19 +1,19 @@
 ﻿using CarRentalAPI.Contracts;
-using CarRentalAPI.Core;
 using ErrorOr;
 
 namespace CarRentalAPI.Application.Interfaces
 {
+
     public interface ICarBookingService
     {
         Task<ErrorOr<CarOrderReply>> CreateOrUpdateCarOrderAsync(CarOrderRequest carOrderRequest);
         Task<ErrorOr<Deleted>> DeleteCarOrderAsync(Guid carOrderId);
         Task<ErrorOr<OpenCarReservationRequest>> OpenCarReservationAsync(OpenCarReservationRequest openCarReservationRequest);
         Task<ErrorOr<CloseCarReservationRequest>> CloseCarReservationAsync(CloseCarReservationRequest closeCarOrderRequest);
-        Task<ErrorOr<Success>> CloseAllOutdatedOpenedCarReservatiosAsync();
-        Task<ErrorOr<Success>> CloseAllOutdatedOpenedCarReserVationsOfCarhsaringUserAsync(Guid carsharingUserId);
-        Task<ErrorOr<Success>> OpenAllWaitingToStartCarReservationsAsync();
-        Task<ErrorOr<Success>> OpenAllWaitingToStartCarReservationsOfCarsharingUserAsync(Guid carsharingUserId);
+        Task<ErrorOr<CloseOutdatedReservationsResponse>> CloseAllOutdatedOpenedCarReservatiosAsync();
+        Task<ErrorOr<CloseOutdatedReservationsResponse>> CloseAllOutdatedOpenedCarReserVationsOfCarhsaringUserAsync(Guid carsharingUserId);
+        Task<ErrorOr<OpenWaitingToStartReservationsResponse>> OpenAllWaitingToStartCarReservationsAsync();
+        Task<ErrorOr<OpenWaitingToStartReservationsResponse>> OpenAllWaitingToStartCarReservationsOfCarsharingUserAsync(Guid carsharingUserId);
         Task<ErrorOr<List<CarOrderResponse>>> GetAllCarOrdersAsync();
         Task<ErrorOr<List<CarOrderResponse>>> GetAllNotConsideredCarOrders();
         Task<ErrorOr<List<CarOrderResponse>>> GetCarOrdersByCarsharingUserIdAsync(Guid carsharingUserId);

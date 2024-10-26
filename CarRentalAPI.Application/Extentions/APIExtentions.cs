@@ -6,12 +6,13 @@ namespace CarRentalAPI.Application.Extentions
 {
     public static class APIExtentions
     {
-        public static void AddWeightControl(this IServiceCollection services)
+        public static void AddCarRental(this IServiceCollection services)
         {
-            services.AddTransient<IUserService, UserService>();
-            services.AddTransient<ICarBookingService, CarBookingService>();
-            services.AddTransient<ICarService, CarService>();
-            services.AddTransient<IGarageManagmentService, GarageManagmentService>();
+            services.AddScoped<ICarBookingService, CarBookingService>();
+            services.AddScoped<ICarService, CarService>();
+            services.AddScoped<IGarageManagmentService, GarageManagmentService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ICarsharingUsersService, CarsharingUsersService>();
         }
     }
 }
