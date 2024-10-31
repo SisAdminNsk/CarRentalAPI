@@ -23,7 +23,7 @@ namespace CarRentalAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddInfrastructure();
             builder.Services.AddEmailVerification();
-            builder.Services.AddApiAuthenticationAndAuthorization();
+            builder.Services.AddApiAuthenticationAndAuthorization(builder.Configuration);
             builder.Services.AddSecurity();
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession();

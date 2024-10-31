@@ -25,10 +25,7 @@ namespace CarRentalAPI.Infrastructure.Security
 
             List<Claim> claims = [new("UserId", user.Id.ToString())];
 
-            foreach (var role in user.Roles)
-            {
-                claims.Add(new(ClaimTypes.Role, role.Name));
-            }
+            user.Roles.ForEach(role => claims.Add(new(ClaimTypes.Role, role.Name)));
 
             var secretKey = jwtoptions.GetRequiredSection("SecretKey").Value;
             var expiresHours = jwtoptions.GetRequiredSection("ExpiresHours").Value;
@@ -38,11 +35,13 @@ namespace CarRentalAPI.Infrastructure.Security
 
             var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(
+            var token = new JwtSecurityToken
+            (
                 claims: claims,
                 signingCredentials: signingCredentials,
                 expires: DateTime.UtcNow.AddHours(hours)
-                );
+            );
+
             var tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
 
             return tokenValue;

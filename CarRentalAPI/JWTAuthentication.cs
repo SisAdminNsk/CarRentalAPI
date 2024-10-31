@@ -6,9 +6,10 @@ namespace CarRentalAPI
 {
     public static class AuthenticationExtentions
     {
-        public static void AddApiAuthenticationAndAuthorization(this IServiceCollection services)
+        public static void AddApiAuthenticationAndAuthorization(this IServiceCollection services, IConfiguration configuration)
         {
-            var key = Encoding.ASCII.GetBytes("77f3cfde-e19b-4ed1-8cf8-df3eaa49be44");
+
+            var key = Encoding.ASCII.GetBytes(configuration.GetRequiredSection("jwtoptions:SecretKey").Value);
 
             services.AddAuthentication(x =>
             {
@@ -24,7 +25,7 @@ namespace CarRentalAPI
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = false,
-                    ValidateAudience = false
+                    ValidateAudience = false 
                 };
             });
 
