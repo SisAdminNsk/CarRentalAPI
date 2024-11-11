@@ -6,6 +6,7 @@ namespace CarRentalAPI.Core
 {
     public class CarOrder : Entity<Guid>
     {
+        [Sortable]
         public DateTime StartOfLease { get; set; }
         public DateTime EndOfLease { get; set; }
         public CarsharingUser CarsharingUser { get; set; }
@@ -14,8 +15,6 @@ namespace CarRentalAPI.Core
         public Guid CarId { get; set; }
         [MaxLength(350)]
         public string? Comment { get; set; }
-        [MaxLength(350)]
-        public string Comment { get; set; }
         public decimal Price { get; set; }
         [Required]
         [CarOrderStatusValidation]

@@ -1,5 +1,4 @@
 using CarRentalAPI.Application.Interfaces;
-using CarRentalAPI.Application.Services;
 using CarRentalAPI.Contracts;
 using CarRentalAPI.Core;
 

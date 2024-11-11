@@ -63,11 +63,11 @@ namespace CarRentalAPI.Application.Services
             }
         }
 
-        public async Task<ErrorOr<Success>> SendEmailVerificationCodeAsync(string email,
-            CancellationToken cancellationToken)
+        public async Task<ErrorOr<Success>> SendEmailVerificationCodeAsync(string email, CancellationToken cancellationToken)
         {
             return await _emailConfirmationService.SendRegistrationCodeMessageAsync(email, cancellationToken);
         }
+
         public async Task<ErrorOr<Success>> IsUserNotExistsWithData(UserRegistrateRequest data)
         {
             try

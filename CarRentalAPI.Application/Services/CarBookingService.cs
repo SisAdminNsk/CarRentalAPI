@@ -26,7 +26,7 @@ namespace CarRentalAPI.Application.Services
                     Where(co => co.Id == closeCarOrderRequest.OpenedCarOrderId).
                     FirstOrDefaultAsync();
 
-                if(openCarOrder is null)
+                if (openCarOrder is null)
                 {
                     return Error.NotFound("OpenCarOrder.NotFound", $"OpenCarOrder with GUID: " +
                         $"{closeCarOrderRequest.OpenedCarOrderId} was not found in database.");
@@ -38,7 +38,7 @@ namespace CarRentalAPI.Application.Services
 
                 return closeCarOrderRequest;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Error.Failure("CarBookingService.CloseCarReservationAsync.Failure", description: ex.Message);
             }
@@ -71,7 +71,7 @@ namespace CarRentalAPI.Application.Services
                     carOrderRequest.LeaseDateTime.StartOfLease,
                     carOrderRequest.LeaseDateTime.EndOfLease,
                     carsharingUser,
-                    car, 
+                    car,
                     carOrderRequest.Comment,
                     carOrderRequest.ApproximatePrice,
                     CarOrdersStatus.NotConsidered
@@ -79,7 +79,7 @@ namespace CarRentalAPI.Application.Services
 
                 var isCarsharingUserAlreadyHasCarOrder = await IsCarsharingUserAlreadyHasCarOrder(carsharingUser.Id, car.Id);
 
-                if (!isCarsharingUserAlreadyHasCarOrder.IsError) 
+                if (!isCarsharingUserAlreadyHasCarOrder.IsError)
                 {
                     if (isCarsharingUserAlreadyHasCarOrder.Value is not null)
                     {
@@ -95,9 +95,9 @@ namespace CarRentalAPI.Application.Services
                     return new CarOrderReply(carOrderRequest, 200, "Created");
                 }
 
-                return isCarsharingUserAlreadyHasCarOrder.FirstError;               
+                return isCarsharingUserAlreadyHasCarOrder.FirstError;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Error.Failure("CarBookingService.CreateCarOrderAsync.Failure", description: ex.Message);
             }
@@ -126,8 +126,8 @@ namespace CarRentalAPI.Application.Services
                 var carOrder = await _context.CarOrders.
                     Where
                     (
-                        co => co.CarsharingUserId == carsharingUserId 
-                        && co.CarId == carId 
+                        co => co.CarsharingUserId == carsharingUserId
+                        && co.CarId == carId
                         && co.Status == CarOrdersStatus.NotConsidered
                     )
                     .FirstOrDefaultAsync();
@@ -146,7 +146,7 @@ namespace CarRentalAPI.Application.Services
             {
                 var carOrder = await _context.CarOrders.FindAsync(carOrderId);
 
-                if(carOrder is null)
+                if (carOrder is null)
                 {
                     return Error.NotFound("CarOrder.NotFound", $"CarOrder with GUID: {carOrderId} was not found in database.");
                 }
@@ -157,7 +157,7 @@ namespace CarRentalAPI.Application.Services
 
                 return Result.Deleted;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Error.Failure("CarBookingService.DeleteCarOrderAsync.Failure", description: ex.Message);
             }
@@ -174,7 +174,7 @@ namespace CarRentalAPI.Application.Services
 
                 return _mapper.Map<List<CarOrderResponse>>(carOrders);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Error.Failure("CarBookingService.GetAllCarOrdersAsync.Failure", description: ex.Message);
             }
@@ -193,7 +193,7 @@ namespace CarRentalAPI.Application.Services
 
                 return _mapper.Map<List<ClosedCarReservationResponse>>(closedCarOrders);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Error.Failure("CarBookingService.GetAllClosedCarOrdersAsync.Failure", description: ex.Message);
             }
@@ -211,7 +211,7 @@ namespace CarRentalAPI.Application.Services
 
                 return _mapper.Map<List<OpenedCarReservationResponse>>(openedCarOrders);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Error.Failure("CarBookingService.GetAllOpenedCarOrdersAsync.Failure", description: ex.Message);
             }
@@ -229,29 +229,53 @@ namespace CarRentalAPI.Application.Services
 
                 return _mapper.Map<List<CarOrderResponse>>(carOrders);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Error.Failure("CarBookingService.GetCarOrdersByCarsharingUserIdAsync.Failure", description: ex.Message);
             }
         }
 
-        public async Task<ErrorOr<List<ClosedCarReservationResponse>>> GetClosedCarOrdersByCarsharingUserIdAsync(Guid carsharingUserId)
+        public async Task<ErrorOr<PaginatedClosedCarReservationsResponse>> GetClosedCarOrdersByCarsharingUserIdAsync(CarOrdersPaginationsParamsRequest paginationParams, Guid carsharingUserId)
         {
             try
             {
                 var closedStatus = new HashSet<string>() { CarOrdersStatus.OutOfTime, CarOrdersStatus.Closed };
 
-                var closedCarOrders = await _context.CarOrders.
+                var query = _context.CarOrders.
+                    AsQueryable().
                     Where(co => co.CarsharingUserId == carsharingUserId).
                     Where(co => closedStatus.Contains(co.Status)).
+                    AsNoTracking();
+
+                if (paginationParams.SortOrder.ToLower() == SortOrdersPagination.Descending)
+                {
+                    query = query.OrderByDescending(e => EF.Property<object>(e, paginationParams.SortBy));
+                }
+
+                if (paginationParams.SortOrder.ToLower() == SortOrdersPagination.Ascending)
+                {
+                    query = query.OrderBy(e => EF.Property<object>(e, paginationParams.SortBy));
+                }
+
+                var totalItems = await query.CountAsync();
+
+                var items = await query.
+                    Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize).
+                    Take(paginationParams.PageSize).
                     Include(co => co.Car).
                     AsNoTracking().
-                    OrderByDescending(co => co.StartOfLease).
                     ToListAsync();
 
-                return _mapper.Map<List<ClosedCarReservationResponse>>(closedCarOrders);
+                return new PaginatedClosedCarReservationsResponse
+                (
+                    totalItems,
+                    paginationParams.PageNumber,
+                    paginationParams.PageSize,
+                    _mapper.Map<List<ClosedCarReservationResponse>>(items)
+                );
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Error.Failure("CarBookingService.GetClosedCarOrdersByCarsharingUserIdAsync.Failure", description: ex.Message);
             }
@@ -263,13 +287,13 @@ namespace CarRentalAPI.Application.Services
             {
                 var carOrder = await _context.CarOrders.FindAsync(openCarReservationRequest.CarOrderId);
 
-                if(carOrder is null)
+                if (carOrder is null)
                 {
                     return Error.NotFound("CarOrder.NotFound", $"CarOrder with GUID: {openCarReservationRequest.CarOrderId} " +
                         $"was not found in database.");
                 }
 
-                if(carOrder.Status != CarOrdersStatus.NotConsidered)
+                if (carOrder.Status != CarOrdersStatus.NotConsidered)
                 {
                     return Error.Conflict("CarOrder.Conflict", $"CarOrder with GUID: {openCarReservationRequest.CarOrderId}" +
                         $" has status: {carOrder.Status}, but " +
@@ -297,7 +321,7 @@ namespace CarRentalAPI.Application.Services
 
                 return openCarReservationRequest;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Error.Failure("CarBookingService.OpenCarReservationAsync.Failure", description: ex.Message);
             }
@@ -337,7 +361,7 @@ namespace CarRentalAPI.Application.Services
 
                 return _mapper.Map<List<CarOrderResponse>>(notConsideredCarOrders);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Error.Failure("CarBookingService.GetAllNotConsideredCarOrders.Failure", description: ex.Message);
             }
@@ -365,10 +389,10 @@ namespace CarRentalAPI.Application.Services
 
                 return new CarStatusResponse() { IsFreeForBooking = true };
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Error.Failure("CarBookingService.IsCarFreeForBooking.Failure", description: ex.Message);
-            }      
+            }
         }
 
         public async Task<ErrorOr<OpenWaitingToStartReservationsResponse>> OpenAllWaitingToStartCarReservationsAsync()
@@ -387,7 +411,7 @@ namespace CarRentalAPI.Application.Services
                 return await GetOpenWaitingToStartReservationsResponse();
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Error.Failure("CarBookingService.OpenAllWaitingToStartCarReservationsAsync.Failure",
                     description: ex.Message);
@@ -411,7 +435,7 @@ namespace CarRentalAPI.Application.Services
                 return await GetOpenWaitingToStartReservationsResponse();
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Error.Failure("CarBookingService.OpenAllWaitingToStartCarReservationsOfCarsharingUserAsync.Failure",
                   description: ex.Message);
@@ -436,10 +460,10 @@ namespace CarRentalAPI.Application.Services
 
                 return new OpenWaitingToStartReservationsResponse(0, Guid.Empty, noOneRecord: true);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Error.Failure("CarBookingService.GetOpenWaitingToStartReservationsResponse.Failure", description: ex.Message);
-            }   
+            }
         }
 
         private async Task<ErrorOr<CloseOutdatedReservationsResponse>> GetCloseOutdatedReservationsResponse()
@@ -461,10 +485,10 @@ namespace CarRentalAPI.Application.Services
 
                 return new CloseOutdatedReservationsResponse(0, Guid.Empty, noOneRecord: true);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Error.Failure("CarBookingService.GetCloseOutdatedReservationsResponse.Failure", description: ex.Message);
-            }          
+            }
         }
 
         public async Task<ErrorOr<CloseOutdatedReservationsResponse>> CloseAllOutdatedOpenedCarReserVationsOfCarhsaringUserAsync(Guid carsharingUserId)
@@ -483,7 +507,7 @@ namespace CarRentalAPI.Application.Services
 
                 return await GetCloseOutdatedReservationsResponse();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Error.Failure("CarBookingService.CloseAllOutdatedOpenedCarReserVationsOfCarhsaringUserAsync.Failure",
                  description: ex.Message);

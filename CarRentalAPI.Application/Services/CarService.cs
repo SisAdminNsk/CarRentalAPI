@@ -21,6 +21,11 @@ namespace CarRentalAPI.Application.Services
             _context = context;
         }
 
+        public async Task<ErrorOr<List<SearchCarResposne>>> SearchCarsByNameAsync(string carName)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<ErrorOr<List<Car>>> GetCarsByBrandAsync(string brand)
         {
             try 

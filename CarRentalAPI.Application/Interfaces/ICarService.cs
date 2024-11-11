@@ -11,5 +11,6 @@ namespace CarRentalAPI.Application.Interfaces
         Task<ErrorOr<List<Car>>> GetAllAvailableCarsAsync();
         Task<ErrorOr<List<Car>>> GetCarsByBrandAsync(string brand);
         Task<ErrorOr<List<Car>>> GetCarsByClassAsync(string carClass);
+        Task<ErrorOr<List<SearchCarResposne>>> SearchCarsByNameAsync(string carName);
     }
 }

@@ -170,9 +170,9 @@ namespace CarRentalAPI.Controllers
 
         [AllowAnonymous]
         [HttpGet("GetClosedCarReservationsByCarsharingUserId")]
-        public async Task<ActionResult> GetClosedCarReservationsByCarsharingUserId([FromQuery] Guid carsharingUserId)
+        public async Task<ActionResult> GetClosedCarReservationsByCarsharingUserId([FromQuery] CarOrdersPaginationsParamsRequest carOrderspaginationsParams, [FromQuery] Guid carsharingUserId)
         {
-            var errorOrClosedCarReservations = await _carBookingService.GetClosedCarOrdersByCarsharingUserIdAsync(carsharingUserId);
+            var errorOrClosedCarReservations = await _carBookingService.GetClosedCarOrdersByCarsharingUserIdAsync(carOrderspaginationsParams, carsharingUserId);
 
             if (errorOrClosedCarReservations.IsError)
             {

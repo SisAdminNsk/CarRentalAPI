@@ -20,7 +20,7 @@ namespace CarRentalAPI.Application.Interfaces
         Task<ErrorOr<List<OpenedCarReservationResponse>>> GetAllOpenedCarOrdersAsync();
         Task<ErrorOr<List<OpenedCarReservationResponse>>> GetOpenedCarOrdersByCarsharingUserIdAsync(Guid carsharingUserId);
         Task<ErrorOr<List<ClosedCarReservationResponse>>> GetAllClosedCarOrdersAsync();
-        Task<ErrorOr<List<ClosedCarReservationResponse>>> GetClosedCarOrdersByCarsharingUserIdAsync(Guid carsharingUserId);
+        Task<ErrorOr<PaginatedClosedCarReservationsResponse>> GetClosedCarOrdersByCarsharingUserIdAsync(CarOrdersPaginationsParamsRequest paginationsParams, Guid carsharingUserId);
         Task<ErrorOr<CarStatusResponse>> IsCarFreeForBooking(Guid carId);
     }
 }

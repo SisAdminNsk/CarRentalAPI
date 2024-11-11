@@ -1,6 +1,5 @@
 ﻿using CarRentalAPI.Application.Interfaces;
 using CarRentalAPI.Application.Interfaces.Email;
-using CarRentalAPI.Application.Services;
 using CarRentalAPI.Infrastructure.Email;
 using CarRentalAPI.Infrastructure.Email.Dependences;
 using CarRentalAPI.Infrastructure.Security;
