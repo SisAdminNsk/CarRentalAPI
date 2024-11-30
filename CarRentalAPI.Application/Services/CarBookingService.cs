@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
+using CarRentalAPI.Application.Extentions;
+using CarRentalAPI.Application.Filters;
 using CarRentalAPI.Application.Interfaces;
+using CarRentalAPI.Application.Paginations;
 using CarRentalAPI.Contracts;
 using CarRentalAPI.Core;
 using ErrorOr;
@@ -235,7 +238,7 @@ namespace CarRentalAPI.Application.Services
             }
         }
 
-        public async Task<ErrorOr<PaginatedClosedCarReservationsResponse>> GetClosedCarOrdersByCarsharingUserIdAsync(CarOrdersPaginationsParamsRequest paginationParams, Guid carsharingUserId)
+        public async Task<ErrorOr<PaginatedClosedCarReservationsResponse>> GetClosedCarOrdersByCarsharingUserIdAsync(CarOrderFilter filter, SortParams sortParams, PageParams pageParams, Guid carsharingUserId)
         {
             try
             {
@@ -247,31 +250,20 @@ namespace CarRentalAPI.Application.Services
                     Where(co => closedStatus.Contains(co.Status)).
                     AsNoTracking();
 
-                if (paginationParams.SortOrder.ToLower() == SortOrdersPagination.Descending)
-                {
-                    query = query.OrderByDescending(e => EF.Property<object>(e, paginationParams.SortBy));
-                }
-
-                if (paginationParams.SortOrder.ToLower() == SortOrdersPagination.Ascending)
-                {
-                    query = query.OrderBy(e => EF.Property<object>(e, paginationParams.SortBy));
-                }
-
-                var totalItems = await query.CountAsync();
-
-                var items = await query.
-                    Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize).
-                    Take(paginationParams.PageSize).
+                var restult = await query.
+                    Filter(filter).
+                    Sort(sortParams).
                     Include(co => co.Car).
                     AsNoTracking().
-                    ToListAsync();
+                    Page(pageParams);
+
 
                 return new PaginatedClosedCarReservationsResponse
                 (
-                    totalItems,
-                    paginationParams.PageNumber,
-                    paginationParams.PageSize,
-                    _mapper.Map<List<ClosedCarReservationResponse>>(items)
+                    restult.Total,
+                    pageParams.Page ?? 1,
+                    pageParams.PageSize ?? 5,
+                    _mapper.Map<List<ClosedCarReservationResponse>>(restult.Data)
                 );
 
             }

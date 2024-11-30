@@ -1,4 +1,7 @@
-﻿using CarRentalAPI.Contracts;
+﻿using CarRentalAPI.Application.Filters;
+using CarRentalAPI.Application.Paginations;
+using CarRentalAPI.Contracts;
+using CarRentalAPI.Core;
 using ErrorOr;
 
 namespace CarRentalAPI.Application.Interfaces
@@ -20,7 +23,7 @@ namespace CarRentalAPI.Application.Interfaces
         Task<ErrorOr<List<OpenedCarReservationResponse>>> GetAllOpenedCarOrdersAsync();
         Task<ErrorOr<List<OpenedCarReservationResponse>>> GetOpenedCarOrdersByCarsharingUserIdAsync(Guid carsharingUserId);
         Task<ErrorOr<List<ClosedCarReservationResponse>>> GetAllClosedCarOrdersAsync();
-        Task<ErrorOr<PaginatedClosedCarReservationsResponse>> GetClosedCarOrdersByCarsharingUserIdAsync(CarOrdersPaginationsParamsRequest paginationsParams, Guid carsharingUserId);
+        Task<ErrorOr<PaginatedClosedCarReservationsResponse>> GetClosedCarOrdersByCarsharingUserIdAsync(CarOrderFilter filter, SortParams sortParams, PageParams pageParams, Guid carsharingUserId);
         Task<ErrorOr<CarStatusResponse>> IsCarFreeForBooking(Guid carId);
     }
 }

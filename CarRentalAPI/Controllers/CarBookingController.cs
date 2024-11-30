@@ -1,4 +1,6 @@
-﻿using CarRentalAPI.Application.Interfaces;
+﻿using CarRentalAPI.Application.Filters;
+using CarRentalAPI.Application.Interfaces;
+using CarRentalAPI.Application.Paginations;
 using CarRentalAPI.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -48,7 +50,7 @@ namespace CarRentalAPI.Controllers
         {
             var errorOrOpenedCarReservation = await _carBookingService.OpenCarReservationAsync(openCarReservationRequest);
 
-            if(errorOrOpenedCarReservation.IsError)
+            if (errorOrOpenedCarReservation.IsError)
             {
                 return BadRequest(errorOrOpenedCarReservation.Errors);
             }
@@ -62,7 +64,7 @@ namespace CarRentalAPI.Controllers
         {
             var errorOrClosedCarReservation = await _carBookingService.CloseCarReservationAsync(closeCarReservationRequest);
 
-            if(errorOrClosedCarReservation.IsError)
+            if (errorOrClosedCarReservation.IsError)
             {
                 return BadRequest(errorOrClosedCarReservation.Errors);
             }
@@ -170,9 +172,10 @@ namespace CarRentalAPI.Controllers
 
         [AllowAnonymous]
         [HttpGet("GetClosedCarReservationsByCarsharingUserId")]
-        public async Task<ActionResult> GetClosedCarReservationsByCarsharingUserId([FromQuery] CarOrdersPaginationsParamsRequest carOrderspaginationsParams, [FromQuery] Guid carsharingUserId)
+        public async Task<ActionResult> GetClosedCarReservationsByCarsharingUserId([FromQuery] CarOrderFilter filter,
+            [FromQuery] SortParams sortParams, [FromQuery] PageParams pageParams, [FromQuery] Guid carsharingUserId)
         {
-            var errorOrClosedCarReservations = await _carBookingService.GetClosedCarOrdersByCarsharingUserIdAsync(carOrderspaginationsParams, carsharingUserId);
+            var errorOrClosedCarReservations = await _carBookingService.GetClosedCarOrdersByCarsharingUserIdAsync(filter, sortParams, pageParams, carsharingUserId);
 
             if (errorOrClosedCarReservations.IsError)
             {

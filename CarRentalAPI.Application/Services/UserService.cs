@@ -104,7 +104,7 @@ namespace CarRentalAPI.Application.Services
 
         private async Task<User> CreateUserAsync(UserRegistrateRequest user)
         {
-            var roles = await _context.UsersRoles.AsNoTracking().ToListAsync();
+            var roles = await _context.UsersRoles.ToListAsync();
 
             var standartUserRole = roles.Where(r => r.Name == "user").ToList();
 
