@@ -44,7 +44,7 @@ namespace CarRentalAPI.Controllers
             return Ok(errorOrOrder.Value);
         }
 
-        [AllowAnonymous] // доступно пользователеям только с ролью Admin
+        [Authorize(Policy = "admin")]
         [HttpPost(("OpenCarReservation"))]
         public async Task<ActionResult> OpenCarReservation([FromBody] OpenCarReservationRequest openCarReservationRequest)
         {
@@ -58,7 +58,7 @@ namespace CarRentalAPI.Controllers
             return Ok(errorOrOpenedCarReservation.Value);
         }
 
-        [AllowAnonymous]  // доступно пользователеям только с ролью Admin
+        [Authorize(Policy = "admin")]
         [HttpPost("CloseCarReservation")]
         public async Task<ActionResult> CloseCarReservation([FromBody] CloseCarReservationRequest closeCarReservationRequest)
         {
@@ -72,8 +72,8 @@ namespace CarRentalAPI.Controllers
             return Ok(errorOrClosedCarReservation.Value);
         }
 
-        [AllowAnonymous]
-        [HttpDelete("DeleteCarOrder")]  // доступно пользователеям только с ролью Admin
+        [Authorize(Policy = "admin")]
+        [HttpDelete("DeleteCarOrder")] 
         public async Task<ActionResult> DeleteCarOrder([FromQuery] Guid orderId)
         {
             var errorOrDeleted = await _carBookingService.DeleteCarOrderAsync(orderId);
@@ -86,7 +86,7 @@ namespace CarRentalAPI.Controllers
             return Ok(errorOrDeleted.Value);
         }
 
-        [AllowAnonymous]
+        [Authorize(Policy = "user")]
         [HttpGet("GetCarOrdersByUserId")]
         public async Task<ActionResult> GetCarOrdersByUserId([FromQuery] Guid userId)
         {
@@ -100,7 +100,7 @@ namespace CarRentalAPI.Controllers
             return Ok(errorOrCarOrders.Value);
         }
 
-        [AllowAnonymous]
+        [Authorize(Policy = "admin")]
         [HttpGet("GetAllCarOrders")]
         public async Task<ActionResult> GetAllCarOrders()
         {
@@ -114,7 +114,7 @@ namespace CarRentalAPI.Controllers
             return Ok(errorOrCarOrders.Value);
         }
 
-        [AllowAnonymous]
+        [Authorize(Policy = "admin")]
         [HttpGet("GetAllNotConsideredCarOrders")]
         public async Task<ActionResult> GetAllNotConsideredCarOrders()
         {
@@ -128,7 +128,7 @@ namespace CarRentalAPI.Controllers
             return Ok(errorOrNotConsideredCarOrders.Value);
         }
 
-        [AllowAnonymous]
+        [Authorize(Policy = "admin")]
         [HttpGet("GetAllOpenedCarReservations")]
         public async Task<ActionResult> GetAllOpenedCarReservations()
         {
@@ -156,7 +156,7 @@ namespace CarRentalAPI.Controllers
             return Ok(errorOrOpenedCarReservations.Value);
         }
 
-        [AllowAnonymous]
+        [Authorize(Policy = "admin")]
         [HttpGet("GetAllClosedCarReservations")]
         public async Task<ActionResult> GetAllClosedCarReservations()
         {
@@ -170,7 +170,7 @@ namespace CarRentalAPI.Controllers
             return Ok(errorOrClosedCarReservations.Value);
         }
 
-        [AllowAnonymous]
+        [Authorize(Policy = "user")]
         [HttpGet("GetClosedCarReservationsByCarsharingUserId")]
         public async Task<ActionResult> GetClosedCarReservationsByCarsharingUserId([FromQuery] CarOrderFilter filter,
             [FromQuery] SortParams sortParams, [FromQuery] PageParams pageParams, [FromQuery] Guid carsharingUserId)
@@ -185,7 +185,7 @@ namespace CarRentalAPI.Controllers
             return Ok(errorOrClosedCarReservations.Value);
         }
 
-        [AllowAnonymous]
+        [Authorize(Policy = "user")]
         [HttpGet("IsCarFreeForBooking")]
         public async Task<ActionResult> IsCarFreeForBooking([FromQuery] Guid carId)
         {

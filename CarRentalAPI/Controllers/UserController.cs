@@ -89,6 +89,8 @@ namespace CarRentalAPI.Controllers
                 return BadRequest(errorOrToken.FirstError);
             }
 
+            HttpContext.Response.Cookies.Append("auth_cookies", errorOrToken.Value.Token);
+
             return Ok(errorOrToken.Value);
         }
     }
